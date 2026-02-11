@@ -162,25 +162,74 @@ load_weeks_data <- function(schedule_data) {
   })
 }
 
+# Ensure all players from player_stats exist in the players table
+# Inserts missing players with minimal info to satisfy foreign key constraints
+# @param player_stats: DataFrame with player statistics containing player_id column
+# @return: TRUE if successful, FALSE if failed
+ensure_players_exist <- function(player_stats) {
+  con <- get_db_connection()
+  if (is.null(con)) return(FALSE)
+
+  tryCatch({
+    # Get unique player_ids from stats
+    stats_player_ids <- unique(player_stats$player_id)
+
+    # Get existing player_ids from database
+    existing_players <- dbGetQuery(con, "SELECT player_id FROM players")$player_id
+
+    # Find missing players
+    missing_ids <- setdiff(stats_player_ids, existing_players)
+
+    if (length(missing_ids) > 0) {
+      cat(paste("Inserting", length(missing_ids), "missing players...\n"))
+
+      # Create minimal player records for missing players
+      missing_players <- data.frame(
+        player_id = missing_ids,
+        first_name = "Unknown",
+        last_name = "Player",
+        first_season = as.integer(format(Sys.Date(), "%Y")),
+        last_season = as.integer(format(Sys.Date(), "%Y")),
+        stringsAsFactors = FALSE
+      )
+
+      dbWriteTable(con, "players", missing_players,
+                   append = TRUE, row.names = FALSE, overwrite = FALSE)
+      cat(paste("✓ Inserted", length(missing_ids), "missing player records\n"))
+    }
+
+    close_db_connection(con)
+    return(TRUE)
+
+  }, error = function(e) {
+    cat(paste("❌ Failed to ensure players exist:", e$message, "\n"))
+    close_db_connection(con)
+    return(FALSE)
+  })
+}
+
 # Load player statistics into the player_week table
 # Inserts weekly player performance data (passing, rushing, receiving stats)
 # @param player_stats: DataFrame with player statistics from transform_player_stats
 # @return: TRUE if successful, FALSE if failed
 load_player_stats <- function(player_stats) {
   cat(paste("Loading", nrow(player_stats), "player-week records...\n"))
-  
+
+  # First ensure all players exist in the players table
+  ensure_players_exist(player_stats)
+
   con <- get_db_connection()
   if (is.null(con)) return(FALSE)
-  
+
   tryCatch({
     # Insert player statistics into player_week table
-    dbWriteTable(con, "player_week", player_stats, 
+    dbWriteTable(con, "player_week", player_stats,
                  append = TRUE, row.names = FALSE, overwrite = FALSE)
     cat(paste("✓ Loaded", nrow(player_stats), "player-week records\n"))
-    
+
     close_db_connection(con)
     return(TRUE)
-    
+
   }, error = function(e) {
     cat(paste("❌ Failed to load player stats:", e$message, "\n"))
     close_db_connection(con)

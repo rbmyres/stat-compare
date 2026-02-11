@@ -1,1 +1,9 @@
 .env*
+
+# Scripts with sensitive info
+scripts
+scripts/*
+
+# Summary files (contain local config details)
+**/.etl-summary.md
+**/.database-summary.md
