@@ -298,10 +298,20 @@ BEGIN
         JOIN players p ON pw.player_id = p.player_id
         JOIN weeks w ON pw.season = w.season AND pw.week = w.week
         WHERE (p_player_id IS NULL OR pw.player_id = p_player_id)
-          AND (p_season_start IS NULL OR pw.season >= p_season_start)
-          AND (p_season_end IS NULL OR pw.season <= p_season_end)
-          AND (p_week_start IS NULL OR pw.week >= p_week_start)
-          AND (p_week_end IS NULL OR pw.week <= p_week_end)
+          AND (
+            (p_season_start IS NULL AND p_week_start IS NULL)
+            OR (p_season_start IS NULL AND pw.week >= p_week_start)
+            OR (p_week_start IS NULL AND pw.season >= p_season_start)
+            OR (pw.season > p_season_start)
+            OR (pw.season = p_season_start AND pw.week >= p_week_start)
+          )
+          AND (
+            (p_season_end IS NULL AND p_week_end IS NULL)
+            OR (p_season_end IS NULL AND pw.week <= p_week_end)
+            OR (p_week_end IS NULL AND pw.season <= p_season_end)
+            OR (pw.season < p_season_end)
+            OR (pw.season = p_season_end AND pw.week <= p_week_end)
+          )
           AND (p_season_type IS NULL OR w.season_type = ANY(v_season_types))
         GROUP BY pw.player_id, p.first_name, p.last_name, p.first_season, p.last_season
     )
@@ -894,10 +904,20 @@ BEGIN
         JOIN teams t ON tw.team_id = t.team_id
         JOIN weeks w ON tw.season = w.season AND tw.week = w.week
         WHERE (p_team_id IS NULL OR tw.team_id = p_team_id)
-          AND (p_season_start IS NULL OR tw.season >= p_season_start)
-          AND (p_season_end IS NULL OR tw.season <= p_season_end)
-          AND (p_week_start IS NULL OR tw.week >= p_week_start)
-          AND (p_week_end IS NULL OR tw.week <= p_week_end)
+          AND (
+            (p_season_start IS NULL AND p_week_start IS NULL)
+            OR (p_season_start IS NULL AND tw.week >= p_week_start)
+            OR (p_week_start IS NULL AND tw.season >= p_season_start)
+            OR (tw.season > p_season_start)
+            OR (tw.season = p_season_start AND tw.week >= p_week_start)
+          )
+          AND (
+            (p_season_end IS NULL AND p_week_end IS NULL)
+            OR (p_season_end IS NULL AND tw.week <= p_week_end)
+            OR (p_week_end IS NULL AND tw.season <= p_season_end)
+            OR (tw.season < p_season_end)
+            OR (tw.season = p_season_end AND tw.week <= p_week_end)
+          )
           AND (p_season_type IS NULL OR w.season_type = ANY(v_season_types))
         GROUP BY tw.team_id, t.display_name, t.abbr
     )
