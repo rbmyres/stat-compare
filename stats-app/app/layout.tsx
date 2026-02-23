@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Navbar } from "@/components/Navbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,15 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NFL Stats",
+  title: "StatCompare",
   description: "Compare NFL player and team statistics",
 };
-
-function FiltersSkeleton() {
-  return (
-    <div className="rounded-lg border border-foreground/10 bg-foreground/2 p-4 h-18 animate-pulse" />
-  );
-}
 
 export default function RootLayout({
   children,
@@ -36,11 +30,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NuqsAdapter>
-          <Suspense fallback={<FiltersSkeleton />}>
-              <main className="container mx-auto px-4 py-6">
-                {children}
-              </main>
-          </Suspense>
+          <Navbar />
+          <main className="container mx-auto px-4 py-6">
+            {children}
+          </main>
         </NuqsAdapter>
       </body>
     </html>
