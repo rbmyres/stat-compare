@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { FilterProvider } from "@/components/filters";
-import { Header } from "@/components/layout";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,12 +37,9 @@ export default function RootLayout({
       >
         <NuqsAdapter>
           <Suspense fallback={<FiltersSkeleton />}>
-            <FilterProvider>
-              <Header />
               <main className="container mx-auto px-4 py-6">
                 {children}
               </main>
-            </FilterProvider>
           </Suspense>
         </NuqsAdapter>
       </body>
