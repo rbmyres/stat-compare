@@ -59,7 +59,7 @@ function NavLink({
     >
       {children}
       {isActive && (
-        <span className="absolute inset-x-1 -bottom-[13px] h-[2px] bg-nfl-red" />
+        <span className="absolute inset-x-1 -bottom-[13px] h-[2px] bg-white" />
       )}
     </Link>
   );
@@ -79,7 +79,7 @@ function NavDropdown({
       <Link
         href={item.href}
         className={cn(
-          "relative flex items-center gap-1 px-3 py-1.5 text-[13px] font-medium tracking-wide uppercase transition-colors duration-150",
+          "relative flex cursor-pointer items-center gap-1 px-3 py-1.5 text-[13px] font-medium tracking-wide uppercase transition-colors duration-150",
           isActive ? "text-white" : "text-white/50 hover:text-white/80"
         )}
       >
@@ -98,7 +98,7 @@ function NavDropdown({
           />
         </svg>
         {isActive && (
-          <span className="absolute inset-x-1 -bottom-[13px] h-[2px] bg-nfl-red" />
+          <span className="absolute inset-x-1 -bottom-[13px] h-[2px] bg-white" />
         )}
       </Link>
 
@@ -148,7 +148,7 @@ function MobileNavLink({
       )}
     >
       {isActive && (
-        <span className="h-4 w-[2px] rounded-full bg-nfl-red" />
+        <span className="h-4 w-[2px] rounded-full bg-white" />
       )}
       {children}
     </Link>
@@ -215,7 +215,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative ml-auto flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-white/10 lg:hidden"
+            className="relative ml-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-white/10 lg:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
           >
@@ -267,7 +267,7 @@ export function Navbar() {
                       )
                     }
                     className={cn(
-                      "flex w-full items-center justify-between rounded-md px-3 py-2.5 text-sm font-medium tracking-wide transition-colors duration-150",
+                      "flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2.5 text-sm font-medium tracking-wide transition-colors duration-150",
                       pathname.startsWith(link.href)
                         ? "text-white"
                         : "text-white/60 hover:bg-white/5 hover:text-white/90"
@@ -275,7 +275,7 @@ export function Navbar() {
                   >
                     <span className="flex items-center gap-3">
                       {pathname.startsWith(link.href) && (
-                        <span className="h-4 w-[2px] rounded-full bg-nfl-red" />
+                        <span className="h-4 w-[2px] rounded-full bg-white" />
                       )}
                       {link.label}
                     </span>

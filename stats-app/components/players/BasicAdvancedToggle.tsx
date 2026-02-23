@@ -25,7 +25,7 @@ export function BasicAdvancedToggle({ value, onChange }: BasicAdvancedToggleProp
             type="button"
             onClick={() => onChange(opt.key)}
             className={cn(
-              "px-2.5 text-[11px] font-semibold tracking-wide transition-all duration-100",
+              "cursor-pointer px-2.5 text-[11px] font-semibold tracking-wide transition-all duration-100",
               "border-r border-foreground/[0.08] last:border-r-0",
               value === opt.key
                 ? "bg-nfl-navy text-white"

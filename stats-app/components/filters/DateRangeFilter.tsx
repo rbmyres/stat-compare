@@ -1,15 +1,19 @@
 "use client";
 
 import { useQueryStates } from "nuqs";
+import { usePathname } from "next/navigation";
 import { filterParsers } from "@/lib/filters/search-params";
 import { YearSelect } from "./YearSelect";
 import { WeekSelect } from "./WeekSelect";
 import { SeasonTypeToggle } from "./SeasonTypeToggle";
 
 export function DateRangeFilter() {
+  const pathname = usePathname();
   const [filters, setFilters] = useQueryStates(filterParsers, {
     shallow: false,
   });
+
+  if (pathname === "/") return null;
 
   const hasNonDefaults =
     filters.startYear !== filterParsers.startYear.defaultValue ||
@@ -23,20 +27,8 @@ export function DateRangeFilter() {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2">
 
         {/* From range */}
-        <YearSelect
-          label="From"
-          value={filters.startYear}
-          onChange={(startYear) => {
-            const updates: Record<string, number> = { startYear };
-            if (startYear > filters.endYear) {
-              updates.endYear = startYear;
-            }
-            setFilters(updates);
-          }}
-          max={filters.endYear}
-        />
         <WeekSelect
-          label="Wk"
+          label="From"
           value={filters.startWeek}
           onChange={(startWeek) => {
             const updates: Record<string, number> = { startWeek };
@@ -54,6 +46,17 @@ export function DateRangeFilter() {
               : undefined
           }
         />
+        <YearSelect
+          value={filters.startYear}
+          onChange={(startYear) => {
+            const updates: Record<string, number> = { startYear };
+            if (startYear > filters.endYear) {
+              updates.endYear = startYear;
+            }
+            setFilters(updates);
+          }}
+          max={filters.endYear}
+        />
 
         {/* Arrow separator */}
         <svg
@@ -67,8 +70,17 @@ export function DateRangeFilter() {
         </svg>
 
         {/* To range */}
-        <YearSelect
+        <WeekSelect
           label="To"
+          value={filters.endWeek}
+          onChange={(endWeek) => setFilters({ endWeek })}
+          min={
+            filters.startYear === filters.endYear
+              ? filters.startWeek
+              : undefined
+          }
+        />
+        <YearSelect
           value={filters.endYear}
           onChange={(endYear) => {
             const updates: Record<string, number> = { endYear };
@@ -78,16 +90,6 @@ export function DateRangeFilter() {
             setFilters(updates);
           }}
           min={filters.startYear}
-        />
-        <WeekSelect
-          label="Wk"
-          value={filters.endWeek}
-          onChange={(endWeek) => setFilters({ endWeek })}
-          min={
-            filters.startYear === filters.endYear
-              ? filters.startWeek
-              : undefined
-          }
         />
 
         {/* Divider */}
@@ -104,7 +106,7 @@ export function DateRangeFilter() {
           <button
             type="button"
             onClick={() => setFilters(null)}
-            className="ml-auto flex h-7 items-center gap-1 rounded border border-nfl-red/15 bg-nfl-red/[0.04] px-2 text-[11px] font-semibold text-nfl-red/60 transition-all duration-100 hover:border-nfl-red/25 hover:bg-nfl-red/[0.08] hover:text-nfl-red/80"
+            className="ml-auto flex h-7 cursor-pointer items-center gap-1 rounded border border-nfl-red/15 bg-nfl-red/[0.04] px-2 text-[11px] font-semibold text-nfl-red/60 transition-all duration-100 hover:border-nfl-red/25 hover:bg-nfl-red/[0.08] hover:text-nfl-red/80"
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

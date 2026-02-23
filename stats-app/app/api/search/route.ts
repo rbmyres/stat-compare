@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
     const term = `%${validation.data.q}%`;
 
     const [players, teams] = await Promise.all([
-      query<{ player_id: string; first_name: string; last_name: string; last_season: number }>(
-        `SELECT player_id, first_name, last_name, last_season
+      query<{ player_id: string; first_name: string; last_name: string; first_season: number; last_season: number }>(
+        `SELECT player_id, first_name, last_name, first_season, last_season
          FROM players
          WHERE LOWER(first_name || ' ' || last_name) LIKE LOWER($1)
          ORDER BY last_season DESC, first_name, last_name
@@ -50,7 +50,9 @@ export async function GET(request: NextRequest) {
         type: "player" as const,
         id: p.player_id,
         name: `${p.first_name} ${p.last_name}`,
-        subtitle: `${p.last_season}`,
+        subtitle: p.first_season === p.last_season
+          ? `${p.first_season}`
+          : `${p.first_season}–${p.last_season}`,
       })),
     ];
 

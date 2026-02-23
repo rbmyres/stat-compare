@@ -8,3 +8,4 @@ scripts/*
 **/.etl-summary.md
 **/.database-summary.md
 **/.frontend-summary.md
+.project-summary.md
