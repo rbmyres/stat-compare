@@ -1,30 +1,9 @@
 import type { TeamStats } from "@/lib/types/team-stats";
+import { num, fmt, dec, pct, epa } from "@/lib/utils/format";
 import { StatSection } from "@/components/players/StatSection";
 
 interface TeamStatsDisplayProps {
   stats: TeamStats;
-}
-
-function num(v: unknown): number {
-  return Number(v) || 0;
-}
-
-function fmt(n: unknown): string {
-  return num(n).toLocaleString("en-US");
-}
-
-function dec(n: unknown, digits = 1): string {
-  return num(n).toFixed(digits);
-}
-
-function pct(n: unknown): string {
-  return `${dec(n)}%`;
-}
-
-function epa(n: unknown): string {
-  const v = num(n);
-  const s = v.toFixed(2);
-  return v > 0 ? `+${s}` : s;
 }
 
 type Stat = { label: string; value: string };
