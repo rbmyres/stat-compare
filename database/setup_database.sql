@@ -15,10 +15,7 @@
 \echo '2. Setting up Row Level Security policies...'
 \i policies.sql
 
-\echo '3. Creating views...'
-\i views.sql
-
-\echo '4. Creating functions...'
+\echo '3. Creating functions...'
 \i functions.sql
 
 \echo 'Database setup complete!'
