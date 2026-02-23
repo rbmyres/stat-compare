@@ -1,6 +1,6 @@
 # NFL ETL Pipeline
 
-A clean, modular ETL pipeline for extracting, transforming, and loading NFL statistics from nflverse data into a PostgreSQL/Supabase database.
+A clean, modular ETL pipeline for extracting, transforming, and loading NFL statistics from nflverse data into a PostgreSQL database.
 
 ## Quick Start
 
@@ -12,11 +12,12 @@ A clean, modular ETL pipeline for extracting, transforming, and loading NFL stat
 2. **Configure Database**
    - Create a `.env` file with your database credentials:
    ```
-   SUPABASE_DB_NAME=your_db_name
-   SUPABASE_HOST=your_host
-   SUPABASE_PORT=5432
-   SUPABASE_USER=your_user
-   SUPABASE_PASSWORD=your_password
+   NFL_DB_NAME=your_db_name
+   NFL_DB_HOST=your_host
+   NFL_DB_PORT=5432
+   NFL_DB_USER=your_user
+   NFL_DB_PASSWORD=your_password
+   NFL_DB_SSLMODE=require
    ```
 
 3. **Run ETL Pipeline**
@@ -56,13 +57,13 @@ etl/
 - **Performance Optimized**: Vectorized operations for fast processing
 - **Error Handling**: Retry mechanisms and comprehensive error reporting
 - **Progress Tracking**: Real-time progress updates for long operations
-- **Database Integration**: Full PostgreSQL/Supabase compatibility
+- **Database Integration**: Full PostgreSQL compatibility
 
 ## Data Sources
 
 - **nflverse**: Play-by-play data, player information, team data, schedules
 - **Coverage**: 1999-2024 NFL seasons (regular season and playoffs)
-- **Statistics**: Comprehensive player and team statistics with advanced metrics
+- **Statistics**: Comprehensive player and team statistics with advanced metrics (EPA, CPOE, success rate)
 
 ## Database Schema
 
@@ -87,7 +88,7 @@ run_etl_pipeline(seasons = 2024, clear_existing = TRUE)
 ## Requirements
 
 - R 4.0+
-- PostgreSQL/Supabase database
+- PostgreSQL database
 - Required R packages (installed via setup.R):
   - nflreadr
   - RPostgres  

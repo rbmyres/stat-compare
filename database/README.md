@@ -1,6 +1,6 @@
 # NFL Database Schema
 
-Complete PostgreSQL/Supabase database setup for NFL statistics.
+Complete PostgreSQL database setup for NFL statistics.
 
 ## Files
 
@@ -43,7 +43,7 @@ Complete PostgreSQL/Supabase database setup for NFL statistics.
 
 ## RLS Policies
 
-The `policies.sql` file creates permissive Row Level Security policies that allow full access to all tables. This fixes the Supabase "unrestricted" error.
+The `policies.sql` file creates permissive Row Level Security policies that allow full access to all tables.
 
 ### Current Policy: Full Access
 ```sql
@@ -72,12 +72,6 @@ SELECT * FROM team_stats('BAL', 2024, 2024, NULL, NULL, 'REG');
 ```
 
 ## Troubleshooting
-
-### "unrestricted" Error
-If you see this error in Supabase, run:
-```sql
-\i policies.sql
-```
 
 ### Function Type Errors
 The functions.sql file includes proper `::int` casts to handle PostgreSQL's BIGINT vs INTEGER differences.
