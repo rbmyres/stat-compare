@@ -7,3 +7,4 @@ scripts/*
 # Summary files (contain local config details)
 **/.etl-summary.md
 **/.database-summary.md
+**/.frontend-summary.md

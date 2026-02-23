@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Navbar } from "@/components/Navbar";
+import { DateRangeFilter } from "@/components/filters/DateRangeFilter";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <NuqsAdapter>
           <Navbar />
+          <DateRangeFilter />
           <main className="container mx-auto px-4 py-6">
             {children}
           </main>

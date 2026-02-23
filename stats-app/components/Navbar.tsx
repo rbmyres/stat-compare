@@ -88,9 +88,6 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#013369]">
-      {/* Thin red accent line at the very top */}
-      <div className="h-[2px] bg-gradient-to-r from-nfl-red via-nfl-red to-transparent" />
-
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-14 items-center gap-6">
           {/* Brand */}

@@ -1,3 +1,6 @@
+export type { PlayerStats } from "./types/player-stats";
+export type { TeamStats } from "./types/team-stats";
+
 export interface Player {
   player_id: string;
   first_name: string;
