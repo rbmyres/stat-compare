@@ -58,13 +58,11 @@ CREATE TABLE public.player_week (
   pass_qb_dropbacks int DEFAULT 0,
   pass_first_downs int DEFAULT 0,
   pass_epa decimal(8,4) DEFAULT 0,
-  pass_wpa decimal(8,4) DEFAULT 0,
   pass_cpoe_total decimal(8,4) DEFAULT 0,
   pass_success_total int DEFAULT 0,
   pass_20_plus int DEFAULT 0,
   pass_long int DEFAULT 0,
   pass_yac_epa_total decimal(8,4) DEFAULT 0,
-  pass_yac_wpa_total decimal(8,4) DEFAULT 0,
   
   -- Rushing stats
   rush_attempts int DEFAULT 0,
@@ -76,13 +74,11 @@ CREATE TABLE public.player_week (
   rush_20_plus int DEFAULT 0,
   rush_first_downs int DEFAULT 0,
   rush_epa_total decimal(8,4) DEFAULT 0,
-  rush_wpa_total decimal(8,4) DEFAULT 0,
   rush_success_total int DEFAULT 0,
   qb_scramble_attempts int DEFAULT 0,
   qb_scramble_yards int DEFAULT 0,
   qb_scramble_epa_total decimal(8,4) DEFAULT 0,
   qb_scramble_touchdowns int DEFAULT 0,
-  qb_scramble_wpa_total decimal(8,4) DEFAULT 0,
   qb_scramble_success_total int DEFAULT 0,
   rush_fumbles int DEFAULT 0,
   rush_fumbles_lost int DEFAULT 0,
@@ -95,10 +91,8 @@ CREATE TABLE public.player_week (
   rec_yac_total int DEFAULT 0,
   rec_first_downs int DEFAULT 0,
   rec_epa_total decimal(8,4) DEFAULT 0,
-  rec_wpa_total decimal(8,4) DEFAULT 0,
   rec_success_total int DEFAULT 0,
   rec_yac_epa_total decimal(8,4) DEFAULT 0,
-  rec_yac_wpa_total decimal(8,4) DEFAULT 0,
   rec_20_plus int DEFAULT 0,
   rec_long int DEFAULT 0,
   rec_air_yards_total int DEFAULT 0,
@@ -110,7 +104,6 @@ CREATE TABLE public.player_week (
   total_plays int DEFAULT 0,
   total_touchdowns int DEFAULT 0,
   total_epa decimal(8,4) DEFAULT 0,
-  total_wpa decimal(8,4) DEFAULT 0,
   total_first_downs int DEFAULT 0,
   total_success_plays int DEFAULT 0,
   total_fumbles int DEFAULT 0,
@@ -119,7 +112,6 @@ CREATE TABLE public.player_week (
   scrim_touches int DEFAULT 0,
   scrim_touchdowns int DEFAULT 0,
   scrim_epa_total decimal(8,4) DEFAULT 0,
-  scrim_wpa_total decimal(8,4) DEFAULT 0,
   scrim_first_downs int DEFAULT 0,
   scrim_success_total int DEFAULT 0,
   
@@ -173,7 +165,6 @@ CREATE TABLE public.team_week (
   off_pass_first_downs int DEFAULT 0,
   off_pass_yac_total int DEFAULT 0,
   off_pass_epa decimal(8,4) DEFAULT 0,
-  off_pass_wpa decimal(8,4) DEFAULT 0,
   off_pass_success_total int DEFAULT 0,
   off_pass_20_plus int DEFAULT 0,
   off_pass_dropbacks int DEFAULT 0,
@@ -188,7 +179,6 @@ CREATE TABLE public.team_week (
   off_rush_first_downs int DEFAULT 0,
   off_rush_epa_total decimal(8,4) DEFAULT 0,
   off_rush_success_total int DEFAULT 0,
-  off_rush_wpa_total decimal(8,4) DEFAULT 0,
   
   -- Offensive total stats
   off_points_total int DEFAULT 0,
@@ -201,7 +191,6 @@ CREATE TABLE public.team_week (
   off_first_downs int GENERATED ALWAYS AS (off_pass_first_downs + off_rush_first_downs) STORED,
   off_touchdowns int GENERATED ALWAYS AS (off_pass_touchdowns + off_rush_touchdowns) STORED,
   off_epa decimal(8,4) GENERATED ALWAYS AS (off_pass_epa + off_rush_epa_total) STORED,
-  off_wpa decimal(8,4) GENERATED ALWAYS AS (off_pass_wpa + off_rush_wpa_total) STORED,
   off_success_total int GENERATED ALWAYS AS (off_pass_success_total + off_rush_success_total) STORED,
   off_explosive_plays int GENERATED ALWAYS AS (off_pass_20_plus + off_rush_10_plus) STORED,
   
@@ -213,10 +202,8 @@ CREATE TABLE public.team_week (
   off_three_and_outs int DEFAULT 0,
   off_early_down_epa decimal(8,4) DEFAULT 0,
   off_early_down_success int DEFAULT 0,
-  off_early_down_wpa decimal(8,4) DEFAULT 0,
   off_late_down_epa decimal(8,4) DEFAULT 0,
   off_late_down_success int DEFAULT 0,
-  off_late_down_wpa decimal(8,4) DEFAULT 0,
   off_early_down_total int DEFAULT 0,
   off_late_down_total int DEFAULT 0,
   
@@ -233,7 +220,6 @@ CREATE TABLE public.team_week (
   def_pass_first_downs int DEFAULT 0,
   def_pass_yac_total int DEFAULT 0,
   def_pass_epa decimal(8,4) DEFAULT 0,
-  def_pass_wpa decimal(8,4) DEFAULT 0,
   def_pass_success_total int DEFAULT 0,
   def_pass_20_plus int DEFAULT 0,
   def_pass_dropbacks int DEFAULT 0,
@@ -248,7 +234,6 @@ CREATE TABLE public.team_week (
   def_rush_first_downs int DEFAULT 0,
   def_rush_epa_total decimal(8,4) DEFAULT 0,
   def_rush_success_total int DEFAULT 0,
-  def_rush_wpa_total decimal(8,4) DEFAULT 0,
 
     
   -- Defensive total stats
@@ -262,7 +247,6 @@ CREATE TABLE public.team_week (
   def_first_downs int GENERATED ALWAYS AS (def_pass_first_downs + def_rush_first_downs) STORED,
   def_touchdowns int GENERATED ALWAYS AS (def_pass_touchdowns + def_rush_touchdowns) STORED,
   def_epa decimal(8,4) GENERATED ALWAYS AS (def_pass_epa + def_rush_epa_total) STORED,
-  def_wpa decimal(8,4) GENERATED ALWAYS AS (def_pass_wpa + def_rush_wpa_total) STORED,
   def_success_total int GENERATED ALWAYS AS (def_pass_success_total + def_rush_success_total) STORED,
   def_explosive_plays int GENERATED ALWAYS AS (def_pass_20_plus + def_rush_20_plus) STORED,
   
@@ -274,10 +258,8 @@ CREATE TABLE public.team_week (
   def_three_and_outs int DEFAULT 0,
   def_early_down_epa decimal(8,4) DEFAULT 0,
   def_early_down_success int DEFAULT 0,
-  def_early_down_wpa decimal(8,4) DEFAULT 0,
   def_late_down_epa decimal(8,4) DEFAULT 0,
   def_late_down_success int DEFAULT 0,
-  def_late_down_wpa decimal(8,4) DEFAULT 0,
   def_early_down_total int DEFAULT 0,
   def_late_down_total int DEFAULT 0,
 

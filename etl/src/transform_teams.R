@@ -55,7 +55,6 @@ transform_team_stats <- function(pbp_data, season) {
       off_pass_first_downs = sum(first_down_pass, na.rm = TRUE),
       off_pass_yac_total = sum(yac, na.rm = TRUE),
       off_pass_epa = round(sum(ifelse(qb_scramble != 1, epa, 0), na.rm = TRUE), 4),
-      off_pass_wpa = round(sum(ifelse(qb_scramble != 1, wpa, 0), na.rm = TRUE), 4),
       off_pass_success_total = sum(is_success, na.rm = TRUE),
       off_pass_20_plus = sum(is_20_plus, na.rm = TRUE),
       .groups = "drop"
@@ -110,7 +109,6 @@ transform_team_stats <- function(pbp_data, season) {
       off_rush_first_downs = sum(first_down_rush, na.rm = TRUE),
       off_rush_epa_total = round(sum(epa, na.rm = TRUE), 2),
       off_rush_success_total = sum(is_success, na.rm = TRUE),
-      off_rush_wpa_total = round(sum(wpa, na.rm = TRUE), 2),
       .groups = "drop"
     ) %>%
     mutate(week = as.integer(week))
@@ -149,13 +147,11 @@ transform_team_stats <- function(pbp_data, season) {
       off_early_down_total = sum(is_early_down, na.rm = TRUE),
       off_early_down_epa = round(sum(epa[is_early_down], na.rm = TRUE), 4),
       off_early_down_success = sum(success[is_early_down] == 1, na.rm = TRUE),
-      off_early_down_wpa = round(sum(wpa[is_early_down], na.rm = TRUE), 4),
 
       # Late down stats (3rd and 4th down)
       off_late_down_total = sum(is_late_down, na.rm = TRUE),
       off_late_down_epa = round(sum(epa[is_late_down], na.rm = TRUE), 4),
       off_late_down_success = sum(success[is_late_down] == 1, na.rm = TRUE),
-      off_late_down_wpa = round(sum(wpa[is_late_down], na.rm = TRUE), 4),
       .groups = "drop"
     ) %>%
     mutate(week = as.integer(week))
@@ -275,7 +271,6 @@ transform_team_stats <- function(pbp_data, season) {
       def_pass_first_downs = sum(first_down_pass, na.rm = TRUE),
       def_pass_yac_total = sum(yac, na.rm = TRUE),
       def_pass_epa = round(sum(ifelse(qb_scramble != 1, epa, 0), na.rm = TRUE), 4),
-      def_pass_wpa = round(sum(ifelse(qb_scramble != 1, wpa, 0), na.rm = TRUE), 4),
       def_pass_success_total = sum(ifelse(qb_scramble != 1 & success == 1, 1, 0), na.rm = TRUE),
       def_pass_20_plus = sum(is_20_plus, na.rm = TRUE),
       .groups = "drop"
@@ -311,7 +306,6 @@ transform_team_stats <- function(pbp_data, season) {
       def_rush_first_downs = sum(first_down_rush, na.rm = TRUE),
       def_rush_epa_total = round(sum(epa, na.rm = TRUE), 2),
       def_rush_success_total = sum(is_success, na.rm = TRUE),
-      def_rush_wpa_total = round(sum(wpa, na.rm = TRUE), 2),
       .groups = "drop"
     ) %>%
     mutate(week = as.integer(week))
@@ -344,13 +338,11 @@ transform_team_stats <- function(pbp_data, season) {
       def_early_down_total = sum(is_early_down, na.rm = TRUE),
       def_early_down_epa = round(sum(epa[is_early_down], na.rm = TRUE), 4),
       def_early_down_success = sum(success[is_early_down] == 1, na.rm = TRUE),
-      def_early_down_wpa = round(sum(wpa[is_early_down], na.rm = TRUE), 4),
 
       # Late down stats (3rd and 4th down)
       def_late_down_total = sum(is_late_down, na.rm = TRUE),
       def_late_down_epa = round(sum(epa[is_late_down], na.rm = TRUE), 4),
       def_late_down_success = sum(success[is_late_down] == 1, na.rm = TRUE),
-      def_late_down_wpa = round(sum(wpa[is_late_down], na.rm = TRUE), 4),
       .groups = "drop"
     ) %>%
     mutate(week = as.integer(week))
@@ -458,14 +450,14 @@ transform_team_stats <- function(pbp_data, season) {
     left_join(def_other_stats, by = c("team_id", "week")) %>%
     # Fill missing values with 0
     mutate(across(where(is.numeric), ~replace_na(.x, 0))) %>%
-    # Convert to appropriate types (exclude EPA/WPA which remain decimal)
-    mutate(across(c(contains("attempts"), contains("completions"), contains("yards"), 
+    # Convert to appropriate types (exclude EPA which remains decimal)
+    mutate(across(c(contains("attempts"), contains("completions"), contains("yards"),
                     contains("touchdowns"), contains("ints"), contains("sacks"),
                     contains("hits"), contains("first_downs"), contains("success"),
                     contains("plus"), contains("stuffs"), contains("fumbles"),
                     contains("drives"), contains("points"), contains("turnovers"),
-                    contains("conversions"), contains("outs")) & 
-                    !contains("epa") & !contains("wpa"), as.integer)) %>%
+                    contains("conversions"), contains("outs")) &
+                    !contains("epa"), as.integer)) %>%
     # Add required columns
     mutate(
       season = season,

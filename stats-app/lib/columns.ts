@@ -36,10 +36,6 @@ export const ADV_PASSING_COLUMNS: ColumnDef[] = [
   { label: "EPA/Att", key: "pass_epa_per_attempt", format: epa },
   { label: "EPA/Comp", key: "pass_epa_per_completion", format: epa },
   { label: "EPA/Dropback", key: "pass_epa_per_dropback", format: epa },
-  { label: "WPA", key: "pass_wpa", format: epa },
-  { label: "WPA/Att", key: "pass_wpa_per_attempt", format: epa },
-  { label: "WPA/Comp", key: "pass_wpa_per_completion", format: epa },
-  { label: "WPA/Dropback", key: "pass_wpa_per_dropback", format: epa },
   { label: "CPOE", key: "pass_cpoe", format: epa },
   { label: "CPOE Total", key: "pass_cpoe_total", format: (v) => dec(v, 2) },
   { label: "Success", key: "pass_success_total", format: fmt },
@@ -59,10 +55,6 @@ export const ADV_PASSING_COLUMNS: ColumnDef[] = [
   { label: "YAC EPA/Att", key: "pass_yac_epa_per_attempt", format: epa },
   { label: "YAC EPA/Comp", key: "pass_yac_epa_per_completion", format: epa },
   { label: "YAC EPA/Drop", key: "pass_yac_epa_per_dropback", format: epa },
-  { label: "YAC WPA", key: "pass_yac_wpa_total", format: epa },
-  { label: "YAC WPA/Att", key: "pass_yac_wpa_per_attempt", format: epa },
-  { label: "YAC WPA/Comp", key: "pass_yac_wpa_per_completion", format: epa },
-  { label: "YAC WPA/Drop", key: "pass_yac_wpa_per_dropback", format: epa },
 ];
 
 // ── RUSHING ──────────────────────────────────────────────────────────
@@ -85,8 +77,6 @@ export const RUSHING_COLUMNS: ColumnDef[] = [
 export const ADV_RUSHING_COLUMNS: ColumnDef[] = [
   { label: "EPA", key: "rush_epa_total", format: epa },
   { label: "EPA/Att", key: "rush_epa_per_attempt", format: epa },
-  { label: "WPA", key: "rush_wpa_total", format: epa },
-  { label: "WPA/Att", key: "rush_wpa_per_attempt", format: epa },
   { label: "Success", key: "rush_success_total", format: fmt },
   { label: "Success %", key: "rush_success_rate", format: pct },
   { label: "TD %", key: "rush_touchdown_rate", format: pct },
@@ -100,8 +90,6 @@ export const ADV_RUSHING_COLUMNS: ColumnDef[] = [
   { label: "Scramble Yds/Game", key: "qb_scramble_yards_per_game", format: (v) => dec(v) },
   { label: "Scramble EPA", key: "qb_scramble_epa_total", format: epa },
   { label: "Scramble EPA/Carry", key: "qb_scramble_epa_per_carry", format: epa },
-  { label: "Scramble WPA", key: "qb_scramble_wpa_total", format: epa },
-  { label: "Scramble WPA/Carry", key: "qb_scramble_wpa_per_carry", format: epa },
   { label: "Scramble Success", key: "qb_scramble_success_total", format: fmt },
   { label: "Scramble Success %", key: "qb_scramble_success_rate", format: pct },
 ];
@@ -130,9 +118,6 @@ export const ADV_RECEIVING_COLUMNS: ColumnDef[] = [
   { label: "EPA", key: "rec_epa_total", format: epa },
   { label: "EPA/Tgt", key: "rec_epa_per_target", format: epa },
   { label: "EPA/Rec", key: "rec_epa_per_reception", format: epa },
-  { label: "WPA", key: "rec_wpa_total", format: epa },
-  { label: "WPA/Tgt", key: "rec_wpa_per_target", format: epa },
-  { label: "WPA/Rec", key: "rec_wpa_per_reception", format: epa },
   { label: "Success", key: "rec_success_total", format: fmt },
   { label: "Success %", key: "rec_success_rate", format: pct },
   { label: "TD %", key: "rec_touchdown_rate", format: pct },
@@ -146,9 +131,6 @@ export const ADV_RECEIVING_COLUMNS: ColumnDef[] = [
   { label: "YAC EPA", key: "rec_yac_epa_total", format: epa },
   { label: "YAC EPA/Tgt", key: "rec_yac_epa_per_target", format: epa },
   { label: "YAC EPA/Rec", key: "rec_yac_epa_per_reception", format: epa },
-  { label: "YAC WPA", key: "rec_yac_wpa_total", format: epa },
-  { label: "YAC WPA/Tgt", key: "rec_yac_wpa_per_target", format: epa },
-  { label: "YAC WPA/Rec", key: "rec_yac_wpa_per_reception", format: epa },
 ];
 
 // ── TOTALS ───────────────────────────────────────────────────────────
@@ -167,8 +149,6 @@ export const TOTALS_COLUMNS: ColumnDef[] = [
   { label: "Yds/Game", key: "total_yards_per_game", format: (v) => dec(v) },
   { label: "Total EPA", key: "total_epa", format: epa },
   { label: "EPA/Play", key: "total_epa_per_play", format: epa },
-  { label: "Total WPA", key: "total_wpa", format: epa },
-  { label: "WPA/Play", key: "total_wpa_per_play", format: epa },
   { label: "Success Plays", key: "total_success_plays", format: fmt },
   { label: "Success %", key: "total_success_rate", format: pct },
   { label: "Scrim Touches", key: "scrim_touches", format: fmt },
@@ -179,8 +159,6 @@ export const TOTALS_COLUMNS: ColumnDef[] = [
   { label: "Scrim Yds/Game", key: "scrim_yards_per_game", format: (v) => dec(v) },
   { label: "Scrim EPA", key: "scrim_epa_total", format: epa },
   { label: "Scrim EPA/Play", key: "scrim_epa_per_play", format: epa },
-  { label: "Scrim WPA", key: "scrim_wpa_total", format: epa },
-  { label: "Scrim WPA/Play", key: "scrim_wpa_per_play", format: epa },
   { label: "Scrim Success", key: "scrim_success_total", format: fmt },
   { label: "Scrim Success %", key: "scrim_success_rate", format: pct },
   { label: "PPR Points", key: "ppr_points", format: (v) => dec(v) },

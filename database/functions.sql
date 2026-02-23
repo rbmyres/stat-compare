@@ -40,13 +40,11 @@ RETURNS TABLE (
     pass_first_downs int,
     pass_yac_total int,
     pass_epa decimal(8,4),
-    pass_wpa decimal(8,4),
     pass_cpoe_total decimal(8,4),
     pass_success_total int,
     pass_20_plus int,
     pass_long int,
     pass_yac_epa_total decimal(8,4),
-    pass_yac_wpa_total decimal(8,4),
     
     -- Calculated passing stats (from aggregated totals)
     pass_comp_percent decimal(5,1),
@@ -69,15 +67,9 @@ RETURNS TABLE (
     pass_epa_per_attempt decimal(6,3),
     pass_epa_per_completion decimal(6,3),
     pass_epa_per_dropback decimal(6,3),
-    pass_wpa_per_attempt decimal(7,4),
-    pass_wpa_per_completion decimal(7,4),
-    pass_wpa_per_dropback decimal(7,4),
     pass_yac_epa_per_attempt decimal(6,3),
     pass_yac_epa_per_completion decimal(6,3),
     pass_yac_epa_per_dropback decimal(6,3),
-    pass_yac_wpa_per_attempt decimal(7,4),
-    pass_yac_wpa_per_completion decimal(7,4),
-    pass_yac_wpa_per_dropback decimal(7,4),
     pass_rating decimal(5,1),
     
     -- Raw rushing stats (aggregated totals)
@@ -90,13 +82,11 @@ RETURNS TABLE (
     rush_20_plus int,
     rush_first_downs int,
     rush_epa_total decimal(8,4),
-    rush_wpa_total decimal(8,4),
     rush_success_total int,
     qb_scramble_attempts int,
     qb_scramble_yards int,
     qb_scramble_epa_total decimal(8,4),
     qb_scramble_tds int,
-    qb_scramble_wpa_total decimal(8,4),
     qb_scramble_success_total int,
     rush_fumbles int,
     rush_fumbles_lost int,
@@ -110,10 +100,8 @@ RETURNS TABLE (
     rush_yards_per_game decimal(8,1),
     rush_epa_per_attempt decimal(6,3),
     rush_success_rate decimal(5,1),
-    rush_wpa_per_attempt decimal(7,4),
     qb_scramble_yards_per_carry decimal(5,2),
     qb_scramble_epa_per_carry decimal(6,3),
-    qb_scramble_wpa_per_carry decimal(7,4),
     qb_scramble_yards_per_game decimal(8,1),
     qb_scramble_success_rate decimal(5,1),
     
@@ -126,10 +114,8 @@ RETURNS TABLE (
     rec_yac_total int,
     rec_first_downs int,
     rec_epa_total decimal(8,4),
-    rec_wpa_total decimal(8,4),
     rec_success_total int,
     rec_yac_epa_total decimal(8,4),
-    rec_yac_wpa_total decimal(8,4),
     rec_20_plus int,
     rec_long int,
     rec_fumbles int,
@@ -148,13 +134,9 @@ RETURNS TABLE (
     rec_first_down_rate decimal(5,2),
     rec_epa_per_target decimal(6,3),
     rec_epa_per_reception decimal(6,3),
-    rec_wpa_per_target decimal(7,4),
-    rec_wpa_per_reception decimal(7,4),
     rec_success_rate decimal(5,1),
     rec_yac_epa_per_target decimal(6,3),
     rec_yac_epa_per_reception decimal(6,3),
-    rec_yac_wpa_per_target decimal(7,4),
-    rec_yac_wpa_per_reception decimal(7,4),
     rec_20_plus_rate decimal(5,2),
     rec_yards_per_game decimal(8,1),
     
@@ -163,7 +145,6 @@ RETURNS TABLE (
     total_plays int,
     total_touchdowns int,
     total_epa decimal(8,4),
-    total_wpa decimal(8,4),
     total_first_downs int,
     total_success_plays int,
     total_fumbles int,
@@ -172,7 +153,6 @@ RETURNS TABLE (
     scrim_touches int,
     scrim_touchdowns int,
     scrim_epa_total decimal(8,4),
-    scrim_wpa_total decimal(8,4),
     scrim_first_downs int,
     scrim_success_total int,
     
@@ -180,12 +160,10 @@ RETURNS TABLE (
     total_yards_per_play decimal(5,2),
     total_yards_per_game decimal(8,1),
     total_epa_per_play decimal(6,3),
-    total_wpa_per_play decimal(7,4),
     total_success_rate decimal(5,1),
     scrim_yards_per_touch decimal(5,2),
     scrim_yards_per_game decimal(8,1),
     scrim_epa_per_play decimal(6,3),
-    scrim_wpa_per_play decimal(7,4),
     scrim_success_rate decimal(5,1),
     
     -- Fantasy points (calculated from aggregated totals)
@@ -226,13 +204,11 @@ BEGIN
             COALESCE(SUM(pw.pass_first_downs), 0)::int as agg_pass_first_downs,
             COALESCE(SUM(pw.pass_yac_total), 0)::int as agg_pass_yac_total,
             COALESCE(SUM(pw.pass_epa), 0) as agg_pass_epa,
-            COALESCE(SUM(pw.pass_wpa), 0) as agg_pass_wpa,
             COALESCE(SUM(pw.pass_cpoe_total), 0) as agg_pass_cpoe_total,
             COALESCE(SUM(pw.pass_success_total), 0)::int as agg_pass_success_total,
             COALESCE(SUM(pw.pass_20_plus), 0)::int as agg_pass_20_plus,
             COALESCE(MAX(pw.pass_long), 0)::int as agg_pass_long,
             COALESCE(SUM(pw.pass_yac_epa_total), 0) as agg_pass_yac_epa_total,
-            COALESCE(SUM(pw.pass_yac_wpa_total), 0) as agg_pass_yac_wpa_total,
 
             COALESCE(SUM(pw.rush_attempts), 0)::int as agg_rush_attempts,
             COALESCE(SUM(pw.rush_yards), 0)::int as agg_rush_yards,
@@ -243,13 +219,11 @@ BEGIN
             COALESCE(SUM(pw.rush_20_plus), 0)::int as agg_rush_20_plus,
             COALESCE(SUM(pw.rush_first_downs), 0)::int as agg_rush_first_downs,
             COALESCE(SUM(pw.rush_epa_total), 0) as agg_rush_epa_total,
-            COALESCE(SUM(pw.rush_wpa_total), 0) as agg_rush_wpa_total,
             COALESCE(SUM(pw.rush_success_total), 0)::int as agg_rush_success_total,
             COALESCE(SUM(pw.qb_scramble_attempts), 0)::int as agg_qb_scramble_attempts,
             COALESCE(SUM(pw.qb_scramble_yards), 0)::int as agg_qb_scramble_yards,
             COALESCE(SUM(pw.qb_scramble_epa_total), 0) as agg_qb_scramble_epa_total,
             COALESCE(SUM(pw.qb_scramble_touchdowns), 0)::int as agg_qb_scramble_tds,
-            COALESCE(SUM(pw.qb_scramble_wpa_total), 0) as agg_qb_scramble_wpa_total,
             COALESCE(SUM(pw.qb_scramble_success_total), 0)::int as agg_qb_scramble_success_total,
             COALESCE(SUM(pw.rush_fumbles), 0)::int as agg_rush_fumbles,
             COALESCE(SUM(pw.rush_fumbles_lost), 0)::int as agg_rush_fumbles_lost,
@@ -262,10 +236,8 @@ BEGIN
             COALESCE(SUM(pw.rec_yac_total), 0)::int as agg_rec_yac_total,
             COALESCE(SUM(pw.rec_first_downs), 0)::int as agg_rec_first_downs,
             COALESCE(SUM(pw.rec_epa_total), 0) as agg_rec_epa_total,
-            COALESCE(SUM(pw.rec_wpa_total), 0) as agg_rec_wpa_total,
             COALESCE(SUM(pw.rec_success_total), 0)::int as agg_rec_success_total,
             COALESCE(SUM(pw.rec_yac_epa_total), 0) as agg_rec_yac_epa_total,
-            COALESCE(SUM(pw.rec_yac_wpa_total), 0) as agg_rec_yac_wpa_total,
             COALESCE(SUM(pw.rec_20_plus), 0)::int as agg_rec_20_plus,
             COALESCE(MAX(pw.rec_long), 0)::int as agg_rec_long,
             COALESCE(SUM(pw.rec_fumbles), 0)::int as agg_rec_fumbles,
@@ -275,7 +247,6 @@ BEGIN
             COALESCE(SUM(pw.total_plays), 0)::int as agg_total_plays,
             COALESCE(SUM(pw.total_touchdowns), 0)::int as agg_total_touchdowns,
             COALESCE(SUM(pw.total_epa), 0) as agg_total_epa,
-            COALESCE(SUM(pw.total_wpa), 0) as agg_total_wpa,
             COALESCE(SUM(pw.total_first_downs), 0)::int as agg_total_first_downs,
             COALESCE(SUM(pw.total_success_plays), 0)::int as agg_total_success_plays,
             COALESCE(SUM(pw.total_fumbles), 0)::int as agg_total_fumbles,
@@ -284,7 +255,6 @@ BEGIN
             COALESCE(SUM(pw.scrim_touches), 0)::int as agg_scrim_touches,
             COALESCE(SUM(pw.scrim_touchdowns), 0)::int as agg_scrim_touchdowns,
             COALESCE(SUM(pw.scrim_epa_total), 0) as agg_scrim_epa_total,
-            COALESCE(SUM(pw.scrim_wpa_total), 0) as agg_scrim_wpa_total,
             COALESCE(SUM(pw.scrim_first_downs), 0)::int as agg_scrim_first_downs,
             COALESCE(SUM(pw.scrim_success_total), 0)::int as agg_scrim_success_total,
 
@@ -341,14 +311,12 @@ BEGIN
         pt.agg_pass_first_downs,
         pt.agg_pass_yac_total,
         pt.agg_pass_epa,
-        pt.agg_pass_wpa,
         pt.agg_pass_cpoe_total,
         pt.agg_pass_success_total,
         pt.agg_pass_20_plus,
         pt.agg_pass_long,
         pt.agg_pass_yac_epa_total,
-        pt.agg_pass_yac_wpa_total,
-        
+
         -- Calculated passing stats (from aggregated totals - CORRECT!)
         CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_completions::decimal / pt.agg_pass_attempts * 100, 1) ELSE 0 END,
         CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_yards::decimal / pt.agg_pass_attempts, 2) ELSE 0 END,
@@ -370,16 +338,10 @@ BEGIN
         CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_epa::decimal / pt.agg_pass_attempts, 3) ELSE 0 END,
         CASE WHEN pt.agg_pass_completions > 0 THEN ROUND(pt.agg_pass_epa::decimal / pt.agg_pass_completions, 3) ELSE 0 END,
         CASE WHEN pt.agg_pass_qb_dropbacks > 0 THEN ROUND(pt.agg_pass_epa::decimal / pt.agg_pass_qb_dropbacks, 3) ELSE 0 END,
-        CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_wpa::decimal / pt.agg_pass_attempts, 4) ELSE 0 END,
-        CASE WHEN pt.agg_pass_completions > 0 THEN ROUND(pt.agg_pass_wpa::decimal / pt.agg_pass_completions, 4) ELSE 0 END,
-        CASE WHEN pt.agg_pass_qb_dropbacks > 0 THEN ROUND(pt.agg_pass_wpa::decimal / pt.agg_pass_qb_dropbacks, 4) ELSE 0 END,
         CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_yac_epa_total::decimal / pt.agg_pass_attempts, 3) ELSE 0 END,
         CASE WHEN pt.agg_pass_completions > 0 THEN ROUND(pt.agg_pass_yac_epa_total::decimal / pt.agg_pass_completions, 3) ELSE 0 END,
         CASE WHEN pt.agg_pass_qb_dropbacks > 0 THEN ROUND(pt.agg_pass_yac_epa_total::decimal / pt.agg_pass_qb_dropbacks, 3) ELSE 0 END,
-        CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_yac_wpa_total::decimal / pt.agg_pass_attempts, 4) ELSE 0 END,
-        CASE WHEN pt.agg_pass_completions > 0 THEN ROUND(pt.agg_pass_yac_wpa_total::decimal / pt.agg_pass_completions, 4) ELSE 0 END,
-        CASE WHEN pt.agg_pass_qb_dropbacks > 0 THEN ROUND(pt.agg_pass_yac_wpa_total::decimal / pt.agg_pass_qb_dropbacks, 4) ELSE 0 END,
-        CASE 
+        CASE
             WHEN pt.agg_pass_attempts >= 1 THEN 
                 GREATEST(0, LEAST(158.3, ROUND(
                     ((pt.agg_pass_completions::decimal / pt.agg_pass_attempts - 0.3) * 5 + 
@@ -399,13 +361,11 @@ BEGIN
         pt.agg_rush_20_plus,
         pt.agg_rush_first_downs,
         pt.agg_rush_epa_total,
-        pt.agg_rush_wpa_total,
         pt.agg_rush_success_total,
         pt.agg_qb_scramble_attempts,
         pt.agg_qb_scramble_yards,
         pt.agg_qb_scramble_epa_total,
         pt.agg_qb_scramble_tds,
-        pt.agg_qb_scramble_wpa_total,
         pt.agg_qb_scramble_success_total,
         pt.agg_rush_fumbles,
         pt.agg_rush_fumbles_lost,
@@ -419,10 +379,8 @@ BEGIN
         CASE WHEN pt.games_played > 0 THEN ROUND(pt.agg_rush_yards::decimal / pt.games_played, 1) ELSE 0 END,
         CASE WHEN pt.agg_rush_attempts > 0 THEN ROUND(pt.agg_rush_epa_total::decimal / pt.agg_rush_attempts, 3) ELSE 0 END,
         CASE WHEN pt.agg_rush_attempts > 0 THEN ROUND(pt.agg_rush_success_total::decimal / pt.agg_rush_attempts * 100, 1) ELSE 0 END,
-        CASE WHEN pt.agg_rush_attempts > 0 THEN ROUND(pt.agg_rush_wpa_total::decimal / pt.agg_rush_attempts, 4) ELSE 0 END,
         CASE WHEN pt.agg_qb_scramble_attempts > 0 THEN ROUND(pt.agg_qb_scramble_yards::decimal / pt.agg_qb_scramble_attempts, 2) ELSE 0 END,
         CASE WHEN pt.agg_qb_scramble_attempts > 0 THEN ROUND(pt.agg_qb_scramble_epa_total::decimal / pt.agg_qb_scramble_attempts, 3) ELSE 0 END,
-        CASE WHEN pt.agg_qb_scramble_attempts > 0 THEN ROUND(pt.agg_qb_scramble_wpa_total::decimal / pt.agg_qb_scramble_attempts, 4) ELSE 0 END,
         CASE WHEN pt.games_played > 0 THEN ROUND(pt.agg_qb_scramble_yards::decimal / pt.games_played, 1) ELSE 0 END,
         CASE WHEN pt.agg_qb_scramble_attempts > 0 THEN ROUND(pt.agg_qb_scramble_success_total::decimal / pt.agg_qb_scramble_attempts * 100, 1) ELSE 0 END,
         
@@ -435,10 +393,8 @@ BEGIN
         pt.agg_rec_yac_total,
         pt.agg_rec_first_downs,
         pt.agg_rec_epa_total,
-        pt.agg_rec_wpa_total,
         pt.agg_rec_success_total,
         pt.agg_rec_yac_epa_total,
-        pt.agg_rec_yac_wpa_total,
         pt.agg_rec_20_plus,
         pt.agg_rec_long,
         pt.agg_rec_fumbles,
@@ -457,13 +413,9 @@ BEGIN
         CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_first_downs::decimal / pt.agg_rec_receptions * 100, 2) ELSE 0 END,
         CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_epa_total::decimal / pt.agg_rec_targets, 3) ELSE 0 END,
         CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_epa_total::decimal / pt.agg_rec_receptions, 3) ELSE 0 END,
-        CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_wpa_total::decimal / pt.agg_rec_targets, 4) ELSE 0 END,
-        CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_wpa_total::decimal / pt.agg_rec_receptions, 4) ELSE 0 END,
         CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_success_total::decimal / pt.agg_rec_targets * 100, 1) ELSE 0 END,
         CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_yac_epa_total::decimal / pt.agg_rec_targets, 3) ELSE 0 END,
         CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_yac_epa_total::decimal / pt.agg_rec_receptions, 3) ELSE 0 END,
-        CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_yac_wpa_total::decimal / pt.agg_rec_targets, 4) ELSE 0 END,
-        CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_yac_wpa_total::decimal / pt.agg_rec_receptions, 4) ELSE 0 END,
         CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_20_plus::decimal / pt.agg_rec_receptions * 100, 2) ELSE 0 END,
         CASE WHEN pt.games_played > 0 THEN ROUND(pt.agg_rec_yards::decimal / pt.games_played, 1) ELSE 0 END,
         
@@ -472,7 +424,6 @@ BEGIN
         pt.agg_total_plays,
         pt.agg_total_touchdowns,
         pt.agg_total_epa,
-        pt.agg_total_wpa,
         pt.agg_total_first_downs,
         pt.agg_total_success_plays,
         pt.agg_total_fumbles,
@@ -481,7 +432,6 @@ BEGIN
         pt.agg_scrim_touches,
         pt.agg_scrim_touchdowns,
         pt.agg_scrim_epa_total,
-        pt.agg_scrim_wpa_total,
         pt.agg_scrim_first_downs,
         pt.agg_scrim_success_total,
         
@@ -489,12 +439,10 @@ BEGIN
         CASE WHEN pt.agg_total_plays > 0 THEN ROUND(pt.agg_total_yards::decimal / pt.agg_total_plays, 2) ELSE 0 END,
         CASE WHEN pt.games_played > 0 THEN ROUND(pt.agg_total_yards::decimal / pt.games_played, 1) ELSE 0 END,
         CASE WHEN pt.agg_total_plays > 0 THEN ROUND(pt.agg_total_epa::decimal / pt.agg_total_plays, 3) ELSE 0 END,
-        CASE WHEN pt.agg_total_plays > 0 THEN ROUND(pt.agg_total_wpa::decimal / pt.agg_total_plays, 4) ELSE 0 END,
         CASE WHEN pt.agg_total_plays > 0 THEN ROUND(pt.agg_total_success_plays::decimal / pt.agg_total_plays * 100, 1) ELSE 0 END,
         CASE WHEN pt.agg_scrim_touches > 0 THEN ROUND(pt.agg_scrim_yards::decimal / pt.agg_scrim_touches, 2) ELSE 0 END,
         CASE WHEN pt.games_played > 0 THEN ROUND(pt.agg_scrim_yards::decimal / pt.games_played, 1) ELSE 0 END,
         CASE WHEN pt.agg_scrim_touches > 0 THEN ROUND(pt.agg_scrim_epa_total::decimal / pt.agg_scrim_touches, 3) ELSE 0 END,
-        CASE WHEN pt.agg_scrim_touches > 0 THEN ROUND(pt.agg_scrim_wpa_total::decimal / pt.agg_scrim_touches, 4) ELSE 0 END,
         CASE WHEN pt.agg_scrim_touches > 0 THEN ROUND(pt.agg_scrim_success_total::decimal / pt.agg_scrim_touches * 100, 1) ELSE 0 END,
         
         -- Fantasy points (calculated from aggregated totals - CORRECT!)
@@ -540,7 +488,6 @@ RETURNS TABLE (
     off_pass_first_downs int,
     off_pass_yac_total int,
     off_pass_epa decimal(8,4),
-    off_pass_wpa decimal(8,4),
     off_pass_success_total int,
     off_pass_20_plus int,
     off_pass_dropbacks int,
@@ -560,10 +507,7 @@ RETURNS TABLE (
     off_pass_epa_per_attempt decimal(6,3),
     off_pass_epa_per_completion decimal(6,3),
     off_pass_epa_per_dropback decimal(6,3),
-    off_pass_wpa_per_attempt decimal(7,4),
-    off_pass_wpa_per_completion decimal(7,4),
-    off_pass_wpa_per_dropback decimal(7,4),
-    
+
     -- Raw offensive rushing stats (aggregated totals)
     off_rush_attempts int,
     off_rush_yards int,
@@ -574,8 +518,7 @@ RETURNS TABLE (
     off_rush_first_downs int,
     off_rush_epa_total decimal(8,4),
     off_rush_success_total int,
-    off_rush_wpa_total decimal(8,4),
-    
+
     -- Calculated offensive rushing stats
     off_rush_yards_per_carry decimal(5,2),
     off_rush_touchdown_rate decimal(5,2),
@@ -585,8 +528,7 @@ RETURNS TABLE (
     off_rush_yards_per_game decimal(8,1),
     off_rush_epa_per_attempt decimal(6,3),
     off_rush_success_rate decimal(5,1),
-    off_rush_wpa_per_attempt decimal(7,4),
-    
+
     -- Raw offensive total stats (aggregated totals)
     off_plays_total int,
     off_drives_total int,
@@ -598,7 +540,6 @@ RETURNS TABLE (
     off_fumbles_lost int,
     off_turnovers int,
     off_epa decimal(8,4),
-    off_wpa decimal(8,4),
     off_success_total int,
     off_explosive_plays int,
     
@@ -612,9 +553,6 @@ RETURNS TABLE (
     off_epa_per_game decimal(8,2),
     off_epa_per_drive decimal(6,3),
     off_epa_per_play decimal(6,3),
-    off_wpa_per_game decimal(7,4),
-    off_wpa_per_drive decimal(7,4),
-    off_wpa_per_play decimal(7,4),
     off_success_rate decimal(5,1),
     off_explosive_play_rate decimal(5,2),
     
@@ -626,10 +564,8 @@ RETURNS TABLE (
     off_three_and_outs int,
     off_early_down_epa decimal(8,4),
     off_early_down_success int,
-    off_early_down_wpa decimal(8,4),
     off_late_down_epa decimal(8,4),
     off_late_down_success int,
-    off_late_down_wpa decimal(8,4),
     off_early_down_total int,
     off_late_down_total int,
     
@@ -639,10 +575,8 @@ RETURNS TABLE (
     off_three_and_out_rate decimal(5,1),
     off_early_down_epa_per_play decimal(6,3),
     off_early_down_success_rate decimal(5,1),
-    off_early_down_wpa_per_play decimal(7,4),
     off_late_down_epa_per_play decimal(6,3),
     off_late_down_success_rate decimal(5,1),
-    off_late_down_wpa_per_play decimal(7,4),
     
     -- Raw defensive passing stats (aggregated totals)
     def_pass_attempts int,
@@ -657,7 +591,6 @@ RETURNS TABLE (
     def_pass_first_downs int,
     def_pass_yac_total int,
     def_pass_epa decimal(8,4),
-    def_pass_wpa decimal(8,4),
     def_pass_success_total int,
     def_pass_20_plus int,
     def_pass_dropbacks int,
@@ -677,10 +610,7 @@ RETURNS TABLE (
     def_pass_epa_per_attempt decimal(6,3),
     def_pass_epa_per_completion decimal(6,3),
     def_pass_epa_per_dropback decimal(6,3),
-    def_pass_wpa_per_attempt decimal(7,4),
-    def_pass_wpa_per_completion decimal(7,4),
-    def_pass_wpa_per_dropback decimal(7,4),
-    
+
     -- Raw defensive rushing stats (aggregated totals)
     def_rush_attempts int,
     def_rush_yards int,
@@ -691,8 +621,7 @@ RETURNS TABLE (
     def_rush_first_downs int,
     def_rush_epa_total decimal(8,4),
     def_rush_success_total int,
-    def_rush_wpa_total decimal(8,4),
-    
+
     -- Calculated defensive rushing stats
     def_rush_yards_per_carry decimal(5,2),
     def_rush_touchdown_rate decimal(5,2),
@@ -702,8 +631,7 @@ RETURNS TABLE (
     def_rush_yards_per_game decimal(8,1),
     def_rush_epa_per_attempt decimal(6,3),
     def_rush_success_rate decimal(5,1),
-    def_rush_wpa_per_attempt decimal(7,4),
-    
+
     -- Raw defensive total stats (aggregated totals)
     def_plays_total int,
     def_drives_total int,
@@ -715,7 +643,6 @@ RETURNS TABLE (
     def_fumbles_lost int,
     def_turnovers int,
     def_epa decimal(8,4),
-    def_wpa decimal(8,4),
     def_success_total int,
     def_explosive_plays int,
     
@@ -729,9 +656,6 @@ RETURNS TABLE (
     def_epa_per_game decimal(8,2),
     def_epa_per_drive decimal(6,3),
     def_epa_per_play decimal(6,3),
-    def_wpa_per_game decimal(7,4),
-    def_wpa_per_drive decimal(7,4),
-    def_wpa_per_play decimal(7,4),
     def_success_rate decimal(5,1),
     def_explosive_play_rate decimal(5,2),
     
@@ -743,10 +667,8 @@ RETURNS TABLE (
     def_three_and_outs int,
     def_early_down_epa decimal(8,4),
     def_early_down_success int,
-    def_early_down_wpa decimal(8,4),
     def_late_down_epa decimal(8,4),
     def_late_down_success int,
-    def_late_down_wpa decimal(8,4),
     def_early_down_total int,
     def_late_down_total int,
     
@@ -756,10 +678,8 @@ RETURNS TABLE (
     def_three_and_out_rate decimal(5,1),
     def_early_down_epa_per_play decimal(6,3),
     def_early_down_success_rate decimal(5,1),
-    def_early_down_wpa_per_play decimal(7,4),
     def_late_down_epa_per_play decimal(6,3),
-    def_late_down_success_rate decimal(5,1),
-    def_late_down_wpa_per_play decimal(7,4)
+    def_late_down_success_rate decimal(5,1)
 ) AS $$
 DECLARE
     v_season_types text[];
@@ -793,7 +713,6 @@ BEGIN
             COALESCE(SUM(tw.off_pass_first_downs), 0)::int as agg_off_pass_first_downs,
             COALESCE(SUM(tw.off_pass_yac_total), 0)::int as agg_off_pass_yac_total,
             COALESCE(SUM(tw.off_pass_epa), 0) as agg_off_pass_epa,
-            COALESCE(SUM(tw.off_pass_wpa), 0) as agg_off_pass_wpa,
             COALESCE(SUM(tw.off_pass_success_total), 0)::int as agg_off_pass_success_total,
             COALESCE(SUM(tw.off_pass_20_plus), 0)::int as agg_off_pass_20_plus,
             COALESCE(SUM(tw.off_pass_dropbacks), 0)::int as agg_off_pass_dropbacks,
@@ -807,7 +726,6 @@ BEGIN
             COALESCE(SUM(tw.off_rush_first_downs), 0)::int as agg_off_rush_first_downs,
             COALESCE(SUM(tw.off_rush_epa_total), 0) as agg_off_rush_epa_total,
             COALESCE(SUM(tw.off_rush_success_total), 0)::int as agg_off_rush_success_total,
-            COALESCE(SUM(tw.off_rush_wpa_total), 0) as agg_off_rush_wpa_total,
 
             COALESCE(SUM(tw.off_plays_total), 0)::int as agg_off_plays_total,
             COALESCE(SUM(tw.off_drives_total), 0)::int as agg_off_drives_total,
@@ -819,7 +737,6 @@ BEGIN
             COALESCE(SUM(tw.off_fumbles_lost), 0)::int as agg_off_fumbles_lost,
             COALESCE(SUM(tw.off_turnovers), 0)::int as agg_off_turnovers,
             COALESCE(SUM(tw.off_epa), 0) as agg_off_epa,
-            COALESCE(SUM(tw.off_wpa), 0) as agg_off_wpa,
             COALESCE(SUM(tw.off_success_total), 0)::int as agg_off_success_total,
             COALESCE(SUM(tw.off_explosive_plays), 0)::int as agg_off_explosive_plays,
 
@@ -830,10 +747,8 @@ BEGIN
             COALESCE(SUM(tw.off_three_and_outs), 0)::int as agg_off_three_and_outs,
             COALESCE(SUM(tw.off_early_down_epa), 0) as agg_off_early_down_epa,
             COALESCE(SUM(tw.off_early_down_success), 0)::int as agg_off_early_down_success,
-            COALESCE(SUM(tw.off_early_down_wpa), 0) as agg_off_early_down_wpa,
             COALESCE(SUM(tw.off_late_down_epa), 0) as agg_off_late_down_epa,
             COALESCE(SUM(tw.off_late_down_success), 0)::int as agg_off_late_down_success,
-            COALESCE(SUM(tw.off_late_down_wpa), 0) as agg_off_late_down_wpa,
             COALESCE(SUM(tw.off_early_down_total), 0)::int as agg_off_early_down_total,
             COALESCE(SUM(tw.off_late_down_total), 0)::int as agg_off_late_down_total,
 
@@ -850,7 +765,6 @@ BEGIN
             COALESCE(SUM(tw.def_pass_first_downs), 0)::int as agg_def_pass_first_downs,
             COALESCE(SUM(tw.def_pass_yac_total), 0)::int as agg_def_pass_yac_total,
             COALESCE(SUM(tw.def_pass_epa), 0) as agg_def_pass_epa,
-            COALESCE(SUM(tw.def_pass_wpa), 0) as agg_def_pass_wpa,
             COALESCE(SUM(tw.def_pass_success_total), 0)::int as agg_def_pass_success_total,
             COALESCE(SUM(tw.def_pass_20_plus), 0)::int as agg_def_pass_20_plus,
             COALESCE(SUM(tw.def_pass_dropbacks), 0)::int as agg_def_pass_dropbacks,
@@ -864,7 +778,6 @@ BEGIN
             COALESCE(SUM(tw.def_rush_first_downs), 0)::int as agg_def_rush_first_downs,
             COALESCE(SUM(tw.def_rush_epa_total), 0) as agg_def_rush_epa_total,
             COALESCE(SUM(tw.def_rush_success_total), 0)::int as agg_def_rush_success_total,
-            COALESCE(SUM(tw.def_rush_wpa_total), 0) as agg_def_rush_wpa_total,
 
             COALESCE(SUM(tw.def_plays_total), 0)::int as agg_def_plays_total,
             COALESCE(SUM(tw.def_drives_total), 0)::int as agg_def_drives_total,
@@ -876,7 +789,6 @@ BEGIN
             COALESCE(SUM(tw.def_fumbles_lost), 0)::int as agg_def_fumbles_lost,
             COALESCE(SUM(tw.def_turnovers), 0)::int as agg_def_turnovers,
             COALESCE(SUM(tw.def_epa), 0) as agg_def_epa,
-            COALESCE(SUM(tw.def_wpa), 0) as agg_def_wpa,
             COALESCE(SUM(tw.def_success_total), 0)::int as agg_def_success_total,
             COALESCE(SUM(tw.def_explosive_plays), 0)::int as agg_def_explosive_plays,
 
@@ -887,10 +799,8 @@ BEGIN
             COALESCE(SUM(tw.def_three_and_outs), 0)::int as agg_def_three_and_outs,
             COALESCE(SUM(tw.def_early_down_epa), 0) as agg_def_early_down_epa,
             COALESCE(SUM(tw.def_early_down_success), 0)::int as agg_def_early_down_success,
-            COALESCE(SUM(tw.def_early_down_wpa), 0) as agg_def_early_down_wpa,
             COALESCE(SUM(tw.def_late_down_epa), 0) as agg_def_late_down_epa,
             COALESCE(SUM(tw.def_late_down_success), 0)::int as agg_def_late_down_success,
-            COALESCE(SUM(tw.def_late_down_wpa), 0) as agg_def_late_down_wpa,
             COALESCE(SUM(tw.def_early_down_total), 0)::int as agg_def_early_down_total,
             COALESCE(SUM(tw.def_late_down_total), 0)::int as agg_def_late_down_total,
 
@@ -944,7 +854,6 @@ BEGIN
         tt.agg_off_pass_first_downs,
         tt.agg_off_pass_yac_total,
         tt.agg_off_pass_epa,
-        tt.agg_off_pass_wpa,
         tt.agg_off_pass_success_total,
         tt.agg_off_pass_20_plus,
         tt.agg_off_pass_dropbacks,
@@ -964,10 +873,7 @@ BEGIN
         CASE WHEN tt.agg_off_pass_attempts > 0 THEN ROUND(tt.agg_off_pass_epa::decimal / tt.agg_off_pass_attempts, 3) ELSE 0 END,
         CASE WHEN tt.agg_off_pass_completions > 0 THEN ROUND(tt.agg_off_pass_epa::decimal / tt.agg_off_pass_completions, 3) ELSE 0 END,
         CASE WHEN tt.agg_off_pass_dropbacks > 0 THEN ROUND(tt.agg_off_pass_epa::decimal / tt.agg_off_pass_dropbacks, 3) ELSE 0 END,
-        CASE WHEN tt.agg_off_pass_attempts > 0 THEN ROUND(tt.agg_off_pass_wpa::decimal / tt.agg_off_pass_attempts, 4) ELSE 0 END,
-        CASE WHEN tt.agg_off_pass_completions > 0 THEN ROUND(tt.agg_off_pass_wpa::decimal / tt.agg_off_pass_completions, 4) ELSE 0 END,
-        CASE WHEN tt.agg_off_pass_dropbacks > 0 THEN ROUND(tt.agg_off_pass_wpa::decimal / tt.agg_off_pass_dropbacks, 4) ELSE 0 END,
-        
+
         -- Raw offensive rushing stats (aggregated)
         tt.agg_off_rush_attempts,
         tt.agg_off_rush_yards,
@@ -978,8 +884,7 @@ BEGIN
         tt.agg_off_rush_first_downs,
         tt.agg_off_rush_epa_total,
         tt.agg_off_rush_success_total,
-        tt.agg_off_rush_wpa_total,
-        
+
         -- Calculated offensive rushing stats (from aggregated totals - CORRECT!)
         CASE WHEN tt.agg_off_rush_attempts > 0 THEN ROUND(tt.agg_off_rush_yards::decimal / tt.agg_off_rush_attempts, 2) ELSE 0 END,
         CASE WHEN tt.agg_off_rush_attempts > 0 THEN ROUND(tt.agg_off_rush_touchdowns::decimal / tt.agg_off_rush_attempts * 100, 2) ELSE 0 END,
@@ -989,8 +894,7 @@ BEGIN
         ROUND(tt.agg_off_rush_yards::decimal, 1),
         CASE WHEN tt.agg_off_rush_attempts > 0 THEN ROUND(tt.agg_off_rush_epa_total::decimal / tt.agg_off_rush_attempts, 3) ELSE 0 END,
         CASE WHEN tt.agg_off_rush_attempts > 0 THEN ROUND(tt.agg_off_rush_success_total::decimal / tt.agg_off_rush_attempts * 100, 1) ELSE 0 END,
-        CASE WHEN tt.agg_off_rush_attempts > 0 THEN ROUND(tt.agg_off_rush_wpa_total::decimal / tt.agg_off_rush_attempts, 4) ELSE 0 END,
-        
+
         -- Raw offensive total stats (aggregated)
         tt.agg_off_plays_total,
         tt.agg_off_drives_total,
@@ -1002,7 +906,6 @@ BEGIN
         tt.agg_off_fumbles_lost,
         tt.agg_off_turnovers,
         tt.agg_off_epa,
-        tt.agg_off_wpa,
         tt.agg_off_success_total,
         tt.agg_off_explosive_plays,
         
@@ -1016,9 +919,6 @@ BEGIN
         CASE WHEN tt.games_played > 0 THEN ROUND(tt.agg_off_epa::decimal / tt.games_played, 2) ELSE 0 END,
         CASE WHEN tt.agg_off_drives_total > 0 THEN ROUND(tt.agg_off_epa::decimal / tt.agg_off_drives_total, 3) ELSE 0 END,
         CASE WHEN tt.agg_off_plays_total > 0 THEN ROUND(tt.agg_off_epa::decimal / tt.agg_off_plays_total, 3) ELSE 0 END,
-        CASE WHEN tt.games_played > 0 THEN ROUND(tt.agg_off_wpa::decimal / tt.games_played, 4) ELSE 0 END,
-        CASE WHEN tt.agg_off_drives_total > 0 THEN ROUND(tt.agg_off_wpa::decimal / tt.agg_off_drives_total, 4) ELSE 0 END,
-        CASE WHEN tt.agg_off_plays_total > 0 THEN ROUND(tt.agg_off_wpa::decimal / tt.agg_off_plays_total, 4) ELSE 0 END,
         CASE WHEN tt.agg_off_plays_total > 0 THEN ROUND(tt.agg_off_success_total::decimal / tt.agg_off_plays_total * 100, 1) ELSE 0 END,
         CASE WHEN tt.agg_off_plays_total > 0 THEN ROUND(tt.agg_off_explosive_plays::decimal / tt.agg_off_plays_total * 100, 2) ELSE 0 END,
         
@@ -1030,10 +930,8 @@ BEGIN
         tt.agg_off_three_and_outs,
         tt.agg_off_early_down_epa,
         tt.agg_off_early_down_success,
-        tt.agg_off_early_down_wpa,
         tt.agg_off_late_down_epa,
         tt.agg_off_late_down_success,
-        tt.agg_off_late_down_wpa,
         tt.agg_off_early_down_total,
         tt.agg_off_late_down_total,
         
@@ -1043,11 +941,9 @@ BEGIN
         CASE WHEN tt.agg_off_drives_total > 0 THEN ROUND(tt.agg_off_three_and_outs::decimal / tt.agg_off_drives_total * 100, 1) ELSE 0 END,
         CASE WHEN tt.agg_off_early_down_total > 0 THEN ROUND(tt.agg_off_early_down_epa::decimal / tt.agg_off_early_down_total, 3) ELSE 0 END,
         CASE WHEN tt.agg_off_early_down_total > 0 THEN ROUND(tt.agg_off_early_down_success::decimal / tt.agg_off_early_down_total * 100, 1) ELSE 0 END,
-        CASE WHEN tt.agg_off_early_down_total > 0 THEN ROUND(tt.agg_off_early_down_wpa::decimal / tt.agg_off_early_down_total, 4) ELSE 0 END,
         CASE WHEN tt.agg_off_late_down_total > 0 THEN ROUND(tt.agg_off_late_down_epa::decimal / tt.agg_off_late_down_total, 3) ELSE 0 END,
         CASE WHEN tt.agg_off_late_down_total > 0 THEN ROUND(tt.agg_off_late_down_success::decimal / tt.agg_off_late_down_total * 100, 1) ELSE 0 END,
-        CASE WHEN tt.agg_off_late_down_total > 0 THEN ROUND(tt.agg_off_late_down_wpa::decimal / tt.agg_off_late_down_total, 4) ELSE 0 END,
-        
+
         -- Raw defensive passing stats (aggregated)
         tt.agg_def_pass_attempts,
         tt.agg_def_pass_yards,
@@ -1061,7 +957,6 @@ BEGIN
         tt.agg_def_pass_first_downs,
         tt.agg_def_pass_yac_total,
         tt.agg_def_pass_epa,
-        tt.agg_def_pass_wpa,
         tt.agg_def_pass_success_total,
         tt.agg_def_pass_20_plus,
         tt.agg_def_pass_dropbacks,
@@ -1081,10 +976,7 @@ BEGIN
         CASE WHEN tt.agg_def_pass_attempts > 0 THEN ROUND(tt.agg_def_pass_epa::decimal / tt.agg_def_pass_attempts, 3) ELSE 0 END,
         CASE WHEN tt.agg_def_pass_completions > 0 THEN ROUND(tt.agg_def_pass_epa::decimal / tt.agg_def_pass_completions, 3) ELSE 0 END,
         CASE WHEN tt.agg_def_pass_dropbacks > 0 THEN ROUND(tt.agg_def_pass_epa::decimal / tt.agg_def_pass_dropbacks, 3) ELSE 0 END,
-        CASE WHEN tt.agg_def_pass_attempts > 0 THEN ROUND(tt.agg_def_pass_wpa::decimal / tt.agg_def_pass_attempts, 4) ELSE 0 END,
-        CASE WHEN tt.agg_def_pass_completions > 0 THEN ROUND(tt.agg_def_pass_wpa::decimal / tt.agg_def_pass_completions, 4) ELSE 0 END,
-        CASE WHEN tt.agg_def_pass_dropbacks > 0 THEN ROUND(tt.agg_def_pass_wpa::decimal / tt.agg_def_pass_dropbacks, 4) ELSE 0 END,
-        
+
         -- Raw defensive rushing stats (aggregated)
         tt.agg_def_rush_attempts,
         tt.agg_def_rush_yards,
@@ -1095,8 +987,7 @@ BEGIN
         tt.agg_def_rush_first_downs,
         tt.agg_def_rush_epa_total,
         tt.agg_def_rush_success_total,
-        tt.agg_def_rush_wpa_total,
-        
+
         -- Calculated defensive rushing stats (from aggregated totals - CORRECT!)
         CASE WHEN tt.agg_def_rush_attempts > 0 THEN ROUND(tt.agg_def_rush_yards::decimal / tt.agg_def_rush_attempts, 2) ELSE 0 END,
         CASE WHEN tt.agg_def_rush_attempts > 0 THEN ROUND(tt.agg_def_rush_touchdowns::decimal / tt.agg_def_rush_attempts * 100, 2) ELSE 0 END,
@@ -1106,8 +997,7 @@ BEGIN
         ROUND(tt.agg_def_rush_yards::decimal, 1),
         CASE WHEN tt.agg_def_rush_attempts > 0 THEN ROUND(tt.agg_def_rush_epa_total::decimal / tt.agg_def_rush_attempts, 3) ELSE 0 END,
         CASE WHEN tt.agg_def_rush_attempts > 0 THEN ROUND(tt.agg_def_rush_success_total::decimal / tt.agg_def_rush_attempts * 100, 1) ELSE 0 END,
-        CASE WHEN tt.agg_def_rush_attempts > 0 THEN ROUND(tt.agg_def_rush_wpa_total::decimal / tt.agg_def_rush_attempts, 4) ELSE 0 END,
-        
+
         -- Raw defensive total stats (aggregated)
         tt.agg_def_plays_total,
         tt.agg_def_drives_total,
@@ -1119,7 +1009,6 @@ BEGIN
         tt.agg_def_fumbles_lost,
         tt.agg_def_turnovers,
         tt.agg_def_epa,
-        tt.agg_def_wpa,
         tt.agg_def_success_total,
         tt.agg_def_explosive_plays,
         
@@ -1133,9 +1022,6 @@ BEGIN
         CASE WHEN tt.games_played > 0 THEN ROUND(tt.agg_def_epa::decimal / tt.games_played, 2) ELSE 0 END,
         CASE WHEN tt.agg_def_drives_total > 0 THEN ROUND(tt.agg_def_epa::decimal / tt.agg_def_drives_total, 3) ELSE 0 END,
         CASE WHEN tt.agg_def_plays_total > 0 THEN ROUND(tt.agg_def_epa::decimal / tt.agg_def_plays_total, 3) ELSE 0 END,
-        CASE WHEN tt.games_played > 0 THEN ROUND(tt.agg_def_wpa::decimal / tt.games_played, 4) ELSE 0 END,
-        CASE WHEN tt.agg_def_drives_total > 0 THEN ROUND(tt.agg_def_wpa::decimal / tt.agg_def_drives_total, 4) ELSE 0 END,
-        CASE WHEN tt.agg_def_plays_total > 0 THEN ROUND(tt.agg_def_wpa::decimal / tt.agg_def_plays_total, 4) ELSE 0 END,
         CASE WHEN tt.agg_def_plays_total > 0 THEN ROUND(tt.agg_def_success_total::decimal / tt.agg_def_plays_total * 100, 1) ELSE 0 END,
         CASE WHEN tt.agg_def_plays_total > 0 THEN ROUND(tt.agg_def_explosive_plays::decimal / tt.agg_def_plays_total * 100, 2) ELSE 0 END,
         
@@ -1147,10 +1033,8 @@ BEGIN
         tt.agg_def_three_and_outs,
         tt.agg_def_early_down_epa,
         tt.agg_def_early_down_success,
-        tt.agg_def_early_down_wpa,
         tt.agg_def_late_down_epa,
         tt.agg_def_late_down_success,
-        tt.agg_def_late_down_wpa,
         tt.agg_def_early_down_total,
         tt.agg_def_late_down_total,
         
@@ -1160,11 +1044,9 @@ BEGIN
         CASE WHEN tt.agg_def_drives_total > 0 THEN ROUND(tt.agg_def_three_and_outs::decimal / tt.agg_def_drives_total * 100, 1) ELSE 0 END,
         CASE WHEN tt.agg_def_early_down_total > 0 THEN ROUND(tt.agg_def_early_down_epa::decimal / tt.agg_def_early_down_total, 3) ELSE 0 END,
         CASE WHEN tt.agg_def_early_down_total > 0 THEN ROUND(tt.agg_def_early_down_success::decimal / tt.agg_def_early_down_total * 100, 1) ELSE 0 END,
-        CASE WHEN tt.agg_def_early_down_total > 0 THEN ROUND(tt.agg_def_early_down_wpa::decimal / tt.agg_def_early_down_total, 4) ELSE 0 END,
         CASE WHEN tt.agg_def_late_down_total > 0 THEN ROUND(tt.agg_def_late_down_epa::decimal / tt.agg_def_late_down_total, 3) ELSE 0 END,
-        CASE WHEN tt.agg_def_late_down_total > 0 THEN ROUND(tt.agg_def_late_down_success::decimal / tt.agg_def_late_down_total * 100, 1) ELSE 0 END,
-        CASE WHEN tt.agg_def_late_down_total > 0 THEN ROUND(tt.agg_def_late_down_wpa::decimal / tt.agg_def_late_down_total, 4) ELSE 0 END
-        
+        CASE WHEN tt.agg_def_late_down_total > 0 THEN ROUND(tt.agg_def_late_down_success::decimal / tt.agg_def_late_down_total * 100, 1) ELSE 0 END
+
     FROM team_totals tt;
 END;
 $$ LANGUAGE plpgsql;

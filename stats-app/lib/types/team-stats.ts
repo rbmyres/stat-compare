@@ -22,7 +22,6 @@ export interface TeamStats {
   off_pass_first_downs: number;
   off_pass_yac_total: number;
   off_pass_epa: number;
-  off_pass_wpa: number;
   off_pass_success_total: number;
   off_pass_20_plus: number;
   off_pass_dropbacks: number;
@@ -42,9 +41,6 @@ export interface TeamStats {
   off_pass_epa_per_attempt: number;
   off_pass_epa_per_completion: number;
   off_pass_epa_per_dropback: number;
-  off_pass_wpa_per_attempt: number;
-  off_pass_wpa_per_completion: number;
-  off_pass_wpa_per_dropback: number;
 
   // Offensive rushing — raw
   off_rush_attempts: number;
@@ -56,7 +52,6 @@ export interface TeamStats {
   off_rush_first_downs: number;
   off_rush_epa_total: number;
   off_rush_success_total: number;
-  off_rush_wpa_total: number;
 
   // Offensive rushing — calculated
   off_rush_yards_per_carry: number;
@@ -67,7 +62,6 @@ export interface TeamStats {
   off_rush_yards_per_game: number;
   off_rush_epa_per_attempt: number;
   off_rush_success_rate: number;
-  off_rush_wpa_per_attempt: number;
 
   // Offensive total — raw
   off_plays_total: number;
@@ -80,7 +74,6 @@ export interface TeamStats {
   off_fumbles_lost: number;
   off_turnovers: number;
   off_epa: number;
-  off_wpa: number;
   off_success_total: number;
   off_explosive_plays: number;
 
@@ -94,9 +87,6 @@ export interface TeamStats {
   off_epa_per_game: number;
   off_epa_per_drive: number;
   off_epa_per_play: number;
-  off_wpa_per_game: number;
-  off_wpa_per_drive: number;
-  off_wpa_per_play: number;
   off_success_rate: number;
   off_explosive_play_rate: number;
 
@@ -108,10 +98,8 @@ export interface TeamStats {
   off_three_and_outs: number;
   off_early_down_epa: number;
   off_early_down_success: number;
-  off_early_down_wpa: number;
   off_late_down_epa: number;
   off_late_down_success: number;
-  off_late_down_wpa: number;
   off_early_down_total: number;
   off_late_down_total: number;
 
@@ -121,10 +109,8 @@ export interface TeamStats {
   off_three_and_out_rate: number;
   off_early_down_epa_per_play: number;
   off_early_down_success_rate: number;
-  off_early_down_wpa_per_play: number;
   off_late_down_epa_per_play: number;
   off_late_down_success_rate: number;
-  off_late_down_wpa_per_play: number;
 
   // Defensive passing — raw
   def_pass_attempts: number;
@@ -139,7 +125,6 @@ export interface TeamStats {
   def_pass_first_downs: number;
   def_pass_yac_total: number;
   def_pass_epa: number;
-  def_pass_wpa: number;
   def_pass_success_total: number;
   def_pass_20_plus: number;
   def_pass_dropbacks: number;
@@ -159,9 +144,6 @@ export interface TeamStats {
   def_pass_epa_per_attempt: number;
   def_pass_epa_per_completion: number;
   def_pass_epa_per_dropback: number;
-  def_pass_wpa_per_attempt: number;
-  def_pass_wpa_per_completion: number;
-  def_pass_wpa_per_dropback: number;
 
   // Defensive rushing — raw
   def_rush_attempts: number;
@@ -173,7 +155,6 @@ export interface TeamStats {
   def_rush_first_downs: number;
   def_rush_epa_total: number;
   def_rush_success_total: number;
-  def_rush_wpa_total: number;
 
   // Defensive rushing — calculated
   def_rush_yards_per_carry: number;
@@ -184,7 +165,6 @@ export interface TeamStats {
   def_rush_yards_per_game: number;
   def_rush_epa_per_attempt: number;
   def_rush_success_rate: number;
-  def_rush_wpa_per_attempt: number;
 
   // Defensive total — raw
   def_plays_total: number;
@@ -197,7 +177,6 @@ export interface TeamStats {
   def_fumbles_lost: number;
   def_turnovers: number;
   def_epa: number;
-  def_wpa: number;
   def_success_total: number;
   def_explosive_plays: number;
 
@@ -211,9 +190,6 @@ export interface TeamStats {
   def_epa_per_game: number;
   def_epa_per_drive: number;
   def_epa_per_play: number;
-  def_wpa_per_game: number;
-  def_wpa_per_drive: number;
-  def_wpa_per_play: number;
   def_success_rate: number;
   def_explosive_play_rate: number;
 
@@ -225,10 +201,8 @@ export interface TeamStats {
   def_three_and_outs: number;
   def_early_down_epa: number;
   def_early_down_success: number;
-  def_early_down_wpa: number;
   def_late_down_epa: number;
   def_late_down_success: number;
-  def_late_down_wpa: number;
   def_early_down_total: number;
   def_late_down_total: number;
 
@@ -238,8 +212,6 @@ export interface TeamStats {
   def_three_and_out_rate: number;
   def_early_down_epa_per_play: number;
   def_early_down_success_rate: number;
-  def_early_down_wpa_per_play: number;
   def_late_down_epa_per_play: number;
   def_late_down_success_rate: number;
-  def_late_down_wpa_per_play: number;
 }

@@ -41,10 +41,6 @@ function buildAdvPassing(s: PlayerStats): Stat[] {
     { label: "EPA/Att", value: epa(s.pass_epa_per_attempt) },
     { label: "EPA/Comp", value: epa(s.pass_epa_per_completion) },
     { label: "EPA/Dropback", value: epa(s.pass_epa_per_dropback) },
-    { label: "WPA", value: epa(s.pass_wpa) },
-    { label: "WPA/Att", value: epa(s.pass_wpa_per_attempt) },
-    { label: "WPA/Comp", value: epa(s.pass_wpa_per_completion) },
-    { label: "WPA/Dropback", value: epa(s.pass_wpa_per_dropback) },
     { label: "CPOE", value: epa(s.pass_cpoe) },
     { label: "CPOE Total", value: dec(s.pass_cpoe_total, 2) },
     { label: "Success", value: fmt(s.pass_success_total) },
@@ -64,10 +60,6 @@ function buildAdvPassing(s: PlayerStats): Stat[] {
     { label: "YAC EPA/Att", value: epa(s.pass_yac_epa_per_attempt) },
     { label: "YAC EPA/Comp", value: epa(s.pass_yac_epa_per_completion) },
     { label: "YAC EPA/Drop", value: epa(s.pass_yac_epa_per_dropback) },
-    { label: "YAC WPA", value: epa(s.pass_yac_wpa_total) },
-    { label: "YAC WPA/Att", value: epa(s.pass_yac_wpa_per_attempt) },
-    { label: "YAC WPA/Comp", value: epa(s.pass_yac_wpa_per_completion) },
-    { label: "YAC WPA/Drop", value: epa(s.pass_yac_wpa_per_dropback) },
   ];
 }
 
@@ -94,8 +86,6 @@ function buildAdvRushing(s: PlayerStats): Stat[] {
   return [
     { label: "EPA", value: epa(s.rush_epa_total) },
     { label: "EPA/Att", value: epa(s.rush_epa_per_attempt) },
-    { label: "WPA", value: epa(s.rush_wpa_total) },
-    { label: "WPA/Att", value: epa(s.rush_wpa_per_attempt) },
     { label: "Success", value: fmt(s.rush_success_total) },
     { label: "Success %", value: pct(s.rush_success_rate) },
     { label: "TD %", value: pct(s.rush_touchdown_rate) },
@@ -109,8 +99,6 @@ function buildAdvRushing(s: PlayerStats): Stat[] {
     { label: "Scramble Yds/Game", value: dec(s.qb_scramble_yards_per_game) },
     { label: "Scramble EPA", value: epa(s.qb_scramble_epa_total) },
     { label: "Scramble EPA/Carry", value: epa(s.qb_scramble_epa_per_carry) },
-    { label: "Scramble WPA", value: epa(s.qb_scramble_wpa_total) },
-    { label: "Scramble WPA/Carry", value: epa(s.qb_scramble_wpa_per_carry) },
     { label: "Scramble Success", value: fmt(s.qb_scramble_success_total) },
     { label: "Scramble Success %", value: pct(s.qb_scramble_success_rate) },
   ];
@@ -143,9 +131,6 @@ function buildAdvReceiving(s: PlayerStats): Stat[] {
     { label: "EPA", value: epa(s.rec_epa_total) },
     { label: "EPA/Tgt", value: epa(s.rec_epa_per_target) },
     { label: "EPA/Rec", value: epa(s.rec_epa_per_reception) },
-    { label: "WPA", value: epa(s.rec_wpa_total) },
-    { label: "WPA/Tgt", value: epa(s.rec_wpa_per_target) },
-    { label: "WPA/Rec", value: epa(s.rec_wpa_per_reception) },
     { label: "Success", value: fmt(s.rec_success_total) },
     { label: "Success %", value: pct(s.rec_success_rate) },
     { label: "TD %", value: pct(s.rec_touchdown_rate) },
@@ -159,9 +144,6 @@ function buildAdvReceiving(s: PlayerStats): Stat[] {
     { label: "YAC EPA", value: epa(s.rec_yac_epa_total) },
     { label: "YAC EPA/Tgt", value: epa(s.rec_yac_epa_per_target) },
     { label: "YAC EPA/Rec", value: epa(s.rec_yac_epa_per_reception) },
-    { label: "YAC WPA", value: epa(s.rec_yac_wpa_total) },
-    { label: "YAC WPA/Tgt", value: epa(s.rec_yac_wpa_per_target) },
-    { label: "YAC WPA/Rec", value: epa(s.rec_yac_wpa_per_reception) },
   ];
 }
 
@@ -182,8 +164,6 @@ function buildTotals(s: PlayerStats): Stat[] {
     { label: "Yds/Game", value: dec(s.total_yards_per_game) },
     { label: "Total EPA", value: epa(s.total_epa) },
     { label: "EPA/Play", value: epa(s.total_epa_per_play) },
-    { label: "Total WPA", value: epa(s.total_wpa) },
-    { label: "WPA/Play", value: epa(s.total_wpa_per_play) },
     { label: "Success Plays", value: fmt(s.total_success_plays) },
     { label: "Success %", value: pct(s.total_success_rate) },
     { label: "Scrim Touches", value: fmt(s.scrim_touches) },
@@ -194,8 +174,6 @@ function buildTotals(s: PlayerStats): Stat[] {
     { label: "Scrim Yds/Game", value: dec(s.scrim_yards_per_game) },
     { label: "Scrim EPA", value: epa(s.scrim_epa_total) },
     { label: "Scrim EPA/Play", value: epa(s.scrim_epa_per_play) },
-    { label: "Scrim WPA", value: epa(s.scrim_wpa_total) },
-    { label: "Scrim WPA/Play", value: epa(s.scrim_wpa_per_play) },
     { label: "Scrim Success", value: fmt(s.scrim_success_total) },
     { label: "Scrim Success %", value: pct(s.scrim_success_rate) },
     { label: "PPR Points", value: dec(s.ppr_points) },

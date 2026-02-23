@@ -25,13 +25,11 @@ export interface PlayerStats {
   pass_first_downs: number;
   pass_yac_total: number;
   pass_epa: number;
-  pass_wpa: number;
   pass_cpoe_total: number;
   pass_success_total: number;
   pass_20_plus: number;
   pass_long: number;
   pass_yac_epa_total: number;
-  pass_yac_wpa_total: number;
 
   // Passing — calculated
   pass_comp_percent: number;
@@ -54,15 +52,9 @@ export interface PlayerStats {
   pass_epa_per_attempt: number;
   pass_epa_per_completion: number;
   pass_epa_per_dropback: number;
-  pass_wpa_per_attempt: number;
-  pass_wpa_per_completion: number;
-  pass_wpa_per_dropback: number;
   pass_yac_epa_per_attempt: number;
   pass_yac_epa_per_completion: number;
   pass_yac_epa_per_dropback: number;
-  pass_yac_wpa_per_attempt: number;
-  pass_yac_wpa_per_completion: number;
-  pass_yac_wpa_per_dropback: number;
   pass_rating: number;
 
   // Rushing — raw
@@ -75,13 +67,11 @@ export interface PlayerStats {
   rush_20_plus: number;
   rush_first_downs: number;
   rush_epa_total: number;
-  rush_wpa_total: number;
   rush_success_total: number;
   qb_scramble_attempts: number;
   qb_scramble_yards: number;
   qb_scramble_epa_total: number;
   qb_scramble_tds: number;
-  qb_scramble_wpa_total: number;
   qb_scramble_success_total: number;
   rush_fumbles: number;
   rush_fumbles_lost: number;
@@ -95,10 +85,8 @@ export interface PlayerStats {
   rush_yards_per_game: number;
   rush_epa_per_attempt: number;
   rush_success_rate: number;
-  rush_wpa_per_attempt: number;
   qb_scramble_yards_per_carry: number;
   qb_scramble_epa_per_carry: number;
-  qb_scramble_wpa_per_carry: number;
   qb_scramble_yards_per_game: number;
   qb_scramble_success_rate: number;
 
@@ -111,10 +99,8 @@ export interface PlayerStats {
   rec_yac_total: number;
   rec_first_downs: number;
   rec_epa_total: number;
-  rec_wpa_total: number;
   rec_success_total: number;
   rec_yac_epa_total: number;
-  rec_yac_wpa_total: number;
   rec_20_plus: number;
   rec_long: number;
   rec_fumbles: number;
@@ -133,13 +119,9 @@ export interface PlayerStats {
   rec_first_down_rate: number;
   rec_epa_per_target: number;
   rec_epa_per_reception: number;
-  rec_wpa_per_target: number;
-  rec_wpa_per_reception: number;
   rec_success_rate: number;
   rec_yac_epa_per_target: number;
   rec_yac_epa_per_reception: number;
-  rec_yac_wpa_per_target: number;
-  rec_yac_wpa_per_reception: number;
   rec_20_plus_rate: number;
   rec_yards_per_game: number;
 
@@ -148,7 +130,6 @@ export interface PlayerStats {
   total_plays: number;
   total_touchdowns: number;
   total_epa: number;
-  total_wpa: number;
   total_first_downs: number;
   total_success_plays: number;
   total_fumbles: number;
@@ -157,7 +138,6 @@ export interface PlayerStats {
   scrim_touches: number;
   scrim_touchdowns: number;
   scrim_epa_total: number;
-  scrim_wpa_total: number;
   scrim_first_downs: number;
   scrim_success_total: number;
 
@@ -165,12 +145,10 @@ export interface PlayerStats {
   total_yards_per_play: number;
   total_yards_per_game: number;
   total_epa_per_play: number;
-  total_wpa_per_play: number;
   total_success_rate: number;
   scrim_yards_per_touch: number;
   scrim_yards_per_game: number;
   scrim_epa_per_play: number;
-  scrim_wpa_per_play: number;
   scrim_success_rate: number;
 
   // Fantasy
