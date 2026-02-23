@@ -163,10 +163,11 @@ load_weeks_data <- function(schedule_data) {
 }
 
 # Ensure all players from player_stats exist in the players table
-# Inserts missing players with minimal info to satisfy foreign key constraints
+# Inserts missing players using roster data when available, falls back to placeholder names
 # @param player_stats: DataFrame with player statistics containing player_id column
+# @param player_data: DataFrame with full nflverse roster (optional, used for name resolution)
 # @return: TRUE if successful, FALSE if failed
-ensure_players_exist <- function(player_stats) {
+ensure_players_exist <- function(player_stats, player_data = NULL) {
   con <- get_db_connection()
   if (is.null(con)) return(FALSE)
 
@@ -183,19 +184,58 @@ ensure_players_exist <- function(player_stats) {
     if (length(missing_ids) > 0) {
       cat(paste("Inserting", length(missing_ids), "missing players...\n"))
 
-      # Create minimal player records for missing players
-      missing_players <- data.frame(
-        player_id = missing_ids,
-        first_name = "Unknown",
-        last_name = "Player",
-        first_season = as.integer(format(Sys.Date(), "%Y")),
-        last_season = as.integer(format(Sys.Date(), "%Y")),
-        stringsAsFactors = FALSE
-      )
+      # Try to resolve names from the full nflverse roster (all positions)
+      if (!is.null(player_data)) {
+        roster_lookup <- player_data %>%
+          select(
+            player_id = gsis_id,
+            first_name = common_first_name,
+            last_name,
+            rookie_season,
+            last_season
+          ) %>%
+          filter(player_id %in% missing_ids) %>%
+          distinct(player_id, .keep_all = TRUE) %>%
+          mutate(
+            first_name = ifelse(is.na(first_name), "Unknown", first_name),
+            last_name = ifelse(is.na(last_name), "Player", last_name),
+            first_season = coalesce(as.integer(rookie_season), as.integer(format(Sys.Date(), "%Y"))),
+            last_season = coalesce(as.integer(last_season), as.integer(format(Sys.Date(), "%Y")))
+          ) %>%
+          select(player_id, first_name, last_name, first_season, last_season)
 
-      dbWriteTable(con, "players", missing_players,
+        resolved_ids <- roster_lookup$player_id
+        still_missing_ids <- setdiff(missing_ids, resolved_ids)
+
+        cat(paste("  - Resolved", length(resolved_ids), "from nflverse roster\n"))
+        if (length(still_missing_ids) > 0) {
+          cat(paste("  -", length(still_missing_ids), "truly unknown (not in roster)\n"))
+        }
+      } else {
+        roster_lookup <- data.frame(
+          player_id = character(0), first_name = character(0),
+          last_name = character(0), first_season = integer(0),
+          last_season = integer(0), stringsAsFactors = FALSE
+        )
+        still_missing_ids <- missing_ids
+      }
+
+      # Create placeholder records only for IDs not found in roster
+      if (length(still_missing_ids) > 0) {
+        placeholder_players <- data.frame(
+          player_id = still_missing_ids,
+          first_name = "Unknown",
+          last_name = "Player",
+          first_season = as.integer(format(Sys.Date(), "%Y")),
+          last_season = as.integer(format(Sys.Date(), "%Y")),
+          stringsAsFactors = FALSE
+        )
+        roster_lookup <- bind_rows(roster_lookup, placeholder_players)
+      }
+
+      dbWriteTable(con, "players", roster_lookup,
                    append = TRUE, row.names = FALSE, overwrite = FALSE)
-      cat(paste("✓ Inserted", length(missing_ids), "missing player records\n"))
+      cat(paste("✓ Inserted", nrow(roster_lookup), "missing player records\n"))
     }
 
     close_db_connection(con)
@@ -211,12 +251,13 @@ ensure_players_exist <- function(player_stats) {
 # Load player statistics into the player_week table
 # Inserts weekly player performance data (passing, rushing, receiving stats)
 # @param player_stats: DataFrame with player statistics from transform_player_stats
+# @param player_data: DataFrame with full nflverse roster (optional, for name resolution)
 # @return: TRUE if successful, FALSE if failed
-load_player_stats <- function(player_stats) {
+load_player_stats <- function(player_stats, player_data = NULL) {
   cat(paste("Loading", nrow(player_stats), "player-week records...\n"))
 
   # First ensure all players exist in the players table
-  ensure_players_exist(player_stats)
+  ensure_players_exist(player_stats, player_data)
 
   con <- get_db_connection()
   if (is.null(con)) return(FALSE)

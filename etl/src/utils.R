@@ -52,6 +52,23 @@ enhance_player_data <- function(player_stats, player_data, schedule_data = NULL)
     fill(team_id, position, .direction = "downup") %>%
     ungroup()
   
+  # Infer position from stats for any remaining NULLs
+  na_position_count <- sum(is.na(enhanced_stats$position))
+  if (na_position_count > 0) {
+    cat(paste("  - Inferring position for", na_position_count,
+              "records with missing position...\n"))
+    enhanced_stats <- enhanced_stats %>%
+      mutate(
+        position = case_when(
+          !is.na(position) ~ position,
+          pass_qb_dropbacks > 0 ~ "QB",
+          rec_targets > 0 ~ "WR",
+          rush_attempts > 0 ~ "RB",
+          TRUE ~ "UNK"
+        )
+      )
+  }
+
   # Add win/loss data if schedule is provided
   if (!is.null(schedule_data)) {
     # Create binary win/loss lookup table from schedule (same logic as team enhancement)

@@ -129,7 +129,7 @@ run_etl_pipeline <- function(seasons, clear_existing = FALSE) {
     
     # Load calculated statistics
     player_success <- retry_operation(function() {
-      load_player_stats(player_stats)
+      load_player_stats(player_stats, player_data)
     })
     
     team_success <- retry_operation(function() {
