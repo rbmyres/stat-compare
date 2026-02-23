@@ -6,8 +6,7 @@ Complete PostgreSQL/Supabase database setup for NFL statistics.
 
 - **`setup_database.sql`** - Master setup script (runs all files in correct order)
 - **`schema.sql`** - Creates all tables, indexes, and constraints
-- **`policies.sql`** - Row Level Security policies (fixes "unrestricted" error)  
-- **`views.sql`** - Database views for statistics
+- **`policies.sql`** - Row Level Security policies (fixes "unrestricted" error)
 - **`functions.sql`** - Query functions for player and team statistics
 
 ## Setup Instructions
@@ -22,23 +21,12 @@ Complete PostgreSQL/Supabase database setup for NFL statistics.
 -- 1. Create schema
 \i schema.sql
 
--- 2. Set up RLS policies 
+-- 2. Set up RLS policies
 \i policies.sql
 
--- 3. Create views
-\i views.sql
-
--- 4. Create functions
+-- 3. Create functions
 \i functions.sql
 ```
-
-### Option 3: Supabase Dashboard
-1. Go to SQL Editor in Supabase
-2. Run each file in order:
-   - schema.sql
-   - policies.sql  
-   - views.sql
-   - functions.sql
 
 ## Database Schema
 
@@ -48,10 +36,6 @@ Complete PostgreSQL/Supabase database setup for NFL statistics.
 - **`weeks`** - Season and week reference data
 - **`player_week`** - Weekly player statistics (populated by ETL)
 - **`team_week`** - Weekly team statistics (populated by ETL)
-
-### Views
-- **`v_player_week`** - Enhanced player statistics with calculated fields
-- **`v_team_week`** - Enhanced team statistics with calculated fields
 
 ### Functions
 - **`player_stats()`** - Query player statistics with flexible filtering
@@ -83,13 +67,8 @@ After setup, you can use the query functions:
 -- Get Lamar Jackson's 2024 stats
 SELECT * FROM player_stats('L.Jackson', 2024, 2024, NULL, NULL, 'REG');
 
--- Get Ravens' 2024 team stats  
+-- Get Ravens' 2024 team stats
 SELECT * FROM team_stats('BAL', 2024, 2024, NULL, NULL, 'REG');
-
--- Query views directly
-SELECT * FROM v_player_week 
-WHERE season = 2024 AND pass_attempts > 100
-ORDER BY pass_yards DESC;
 ```
 
 ## Troubleshooting
