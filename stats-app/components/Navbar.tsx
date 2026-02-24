@@ -35,7 +35,7 @@ const NAV_LINKS: NavItem[] = [
   },
   { href: "/compare", label: "Compare" },
   { href: "/graph", label: "Graph" },
-  { href: "/dictionary", label: "Dictionary" },
+  { href: "/glossary", label: "Glossary" },
 ];
 
 function NavLink({

@@ -1,6 +1,9 @@
+import { StatTooltip } from "@/components/StatTooltip";
+import { getStatDescription } from "@/lib/stat-definitions";
+
 interface StatSectionProps {
   title: string;
-  stats: { label: string; value: string }[];
+  stats: { label: string; value: string; key?: string }[];
 }
 
 export function StatSection({ title, stats }: StatSectionProps) {
@@ -19,7 +22,12 @@ export function StatSection({ title, stats }: StatSectionProps) {
                   key={stat.label}
                   className="whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35"
                 >
-                  {stat.label}
+                  <StatTooltip
+                    content={stat.key ? getStatDescription(stat.key) : undefined}
+                    position="top"
+                  >
+                    {stat.label}
+                  </StatTooltip>
                 </th>
               ))}
             </tr>

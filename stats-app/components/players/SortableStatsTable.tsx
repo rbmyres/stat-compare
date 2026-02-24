@@ -6,6 +6,8 @@ import type { PlayerStats } from "@/lib/types/player-stats";
 import type { ColumnDef } from "@/lib/columns";
 import { num } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
+import { StatTooltip } from "@/components/StatTooltip";
+import { getStatDescription } from "@/lib/stat-definitions";
 
 const PAGE_SIZE = 50;
 
@@ -112,7 +114,9 @@ export function SortableStatsTable({ players, columns }: SortableStatsTableProps
                 )}
               >
                 <span className="inline-flex items-center gap-1">
-                  {col.label}
+                  <StatTooltip content={getStatDescription(col.key)}>
+                    {col.label}
+                  </StatTooltip>
                   {sortKey === col.key && (
                     <span className="text-[8px]">
                       {sortDir === "desc" ? "\u25BC" : "\u25B2"}

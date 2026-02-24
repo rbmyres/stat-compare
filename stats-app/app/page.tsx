@@ -22,8 +22,8 @@ const sections = [
     description: "Visualize trends and performance over time.",
   },
   {
-    href: "/dictionary",
-    title: "Dictionary",
+    href: "/glossary",
+    title: "Glossary",
     description: "Definitions for every stat and metric.",
   },
 ];

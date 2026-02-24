@@ -6,6 +6,8 @@ import type { TeamStats } from "@/lib/types/team-stats";
 import type { TeamColumnDef } from "@/lib/team-columns";
 import { num } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
+import { StatTooltip } from "@/components/StatTooltip";
+import { getStatDescription } from "@/lib/stat-definitions";
 
 interface SortableTeamTableProps {
   teams: TeamStats[];
@@ -66,7 +68,9 @@ export function SortableTeamTable({ teams, columns }: SortableTeamTableProps) {
                 )}
               >
                 <span className="inline-flex items-center gap-1">
-                  {col.label}
+                  <StatTooltip content={getStatDescription(col.key)}>
+                    {col.label}
+                  </StatTooltip>
                   {sortKey === col.key && (
                     <span className="text-[8px]">
                       {sortDir === "desc" ? "\u25BC" : "\u25B2"}
