@@ -163,11 +163,13 @@ load_weeks_data <- function(schedule_data) {
 }
 
 # Ensure all players from player_stats exist in the players table
-# Inserts missing players using roster data when available, falls back to placeholder names
+# Inserts missing players using roster data when available, falls back to PBP names,
+# then placeholder names as a last resort
 # @param player_stats: DataFrame with player statistics containing player_id column
 # @param player_data: DataFrame with full nflverse roster (optional, used for name resolution)
+# @param pbp_data: DataFrame with play-by-play data (optional, used for name fallback)
 # @return: TRUE if successful, FALSE if failed
-ensure_players_exist <- function(player_stats, player_data = NULL) {
+ensure_players_exist <- function(player_stats, player_data = NULL, pbp_data = NULL) {
   con <- get_db_connection()
   if (is.null(con)) return(FALSE)
 
@@ -197,8 +199,6 @@ ensure_players_exist <- function(player_stats, player_data = NULL) {
           filter(player_id %in% missing_ids) %>%
           distinct(player_id, .keep_all = TRUE) %>%
           mutate(
-            first_name = ifelse(is.na(first_name), "Unknown", first_name),
-            last_name = ifelse(is.na(last_name), "Player", last_name),
             first_season = coalesce(as.integer(rookie_season), as.integer(format(Sys.Date(), "%Y"))),
             last_season = coalesce(as.integer(last_season), as.integer(format(Sys.Date(), "%Y")))
           ) %>%
@@ -208,9 +208,6 @@ ensure_players_exist <- function(player_stats, player_data = NULL) {
         still_missing_ids <- setdiff(missing_ids, resolved_ids)
 
         cat(paste("  - Resolved", length(resolved_ids), "from nflverse roster\n"))
-        if (length(still_missing_ids) > 0) {
-          cat(paste("  -", length(still_missing_ids), "truly unknown (not in roster)\n"))
-        }
       } else {
         roster_lookup <- data.frame(
           player_id = character(0), first_name = character(0),
@@ -220,7 +217,73 @@ ensure_players_exist <- function(player_stats, player_data = NULL) {
         still_missing_ids <- missing_ids
       }
 
-      # Create placeholder records only for IDs not found in roster
+      # Fallback: resolve names from play-by-play data for IDs not in roster
+      if (length(still_missing_ids) > 0 && !is.null(pbp_data)) {
+        pbp_names <- bind_rows(
+          pbp_data %>% select(player_id = passer_player_id, player_name = passer_player_name),
+          pbp_data %>% select(player_id = rusher_player_id, player_name = rusher_player_name),
+          pbp_data %>% select(player_id = receiver_player_id, player_name = receiver_player_name)
+        ) %>%
+          filter(!is.na(player_id), !is.na(player_name), player_id %in% still_missing_ids) %>%
+          distinct(player_id, .keep_all = TRUE) %>%
+          mutate(
+            # PBP names are typically "F.Last" — split on first period or space
+            first_name = sub("^([^. ]+).*", "\\1", player_name),
+            last_name = sub("^[^. ]+[. ]", "", player_name),
+            first_season = as.integer(format(Sys.Date(), "%Y")),
+            last_season = as.integer(format(Sys.Date(), "%Y"))
+          ) %>%
+          select(player_id, first_name, last_name, first_season, last_season)
+
+        pbp_resolved_ids <- pbp_names$player_id
+        still_missing_ids <- setdiff(still_missing_ids, pbp_resolved_ids)
+
+        cat(paste("  - Resolved", length(pbp_resolved_ids), "from play-by-play data\n"))
+        roster_lookup <- bind_rows(roster_lookup, pbp_names)
+      }
+
+      # Also fix any NA names in roster_lookup using PBP data
+      if (!is.null(pbp_data)) {
+        na_name_ids <- roster_lookup %>%
+          filter(is.na(first_name) | is.na(last_name)) %>%
+          pull(player_id)
+
+        if (length(na_name_ids) > 0) {
+          pbp_fix <- bind_rows(
+            pbp_data %>% select(player_id = passer_player_id, player_name = passer_player_name),
+            pbp_data %>% select(player_id = rusher_player_id, player_name = rusher_player_name),
+            pbp_data %>% select(player_id = receiver_player_id, player_name = receiver_player_name)
+          ) %>%
+            filter(!is.na(player_id), !is.na(player_name), player_id %in% na_name_ids) %>%
+            distinct(player_id, .keep_all = TRUE) %>%
+            mutate(
+              pbp_first = sub("^([^. ]+).*", "\\1", player_name),
+              pbp_last = sub("^[^. ]+[. ]", "", player_name)
+            ) %>%
+            select(player_id, pbp_first, pbp_last)
+
+          roster_lookup <- roster_lookup %>%
+            left_join(pbp_fix, by = "player_id") %>%
+            mutate(
+              first_name = coalesce(first_name, pbp_first),
+              last_name = coalesce(last_name, pbp_last)
+            ) %>%
+            select(-pbp_first, -pbp_last)
+        }
+      }
+
+      # Last resort: "Unknown Player" for any remaining NA names
+      roster_lookup <- roster_lookup %>%
+        mutate(
+          first_name = ifelse(is.na(first_name), "Unknown", first_name),
+          last_name = ifelse(is.na(last_name), "Player", last_name)
+        )
+
+      if (length(still_missing_ids) > 0) {
+        cat(paste("  -", length(still_missing_ids), "truly unknown (not in roster or PBP)\n"))
+      }
+
+      # Create placeholder records only for IDs not found in roster or PBP
       if (length(still_missing_ids) > 0) {
         placeholder_players <- data.frame(
           player_id = still_missing_ids,
@@ -252,12 +315,13 @@ ensure_players_exist <- function(player_stats, player_data = NULL) {
 # Inserts weekly player performance data (passing, rushing, receiving stats)
 # @param player_stats: DataFrame with player statistics from transform_player_stats
 # @param player_data: DataFrame with full nflverse roster (optional, for name resolution)
+# @param pbp_data: DataFrame with play-by-play data (optional, for name fallback)
 # @return: TRUE if successful, FALSE if failed
-load_player_stats <- function(player_stats, player_data = NULL) {
+load_player_stats <- function(player_stats, player_data = NULL, pbp_data = NULL) {
   cat(paste("Loading", nrow(player_stats), "player-week records...\n"))
 
   # First ensure all players exist in the players table
-  ensure_players_exist(player_stats, player_data)
+  ensure_players_exist(player_stats, player_data, pbp_data)
 
   con <- get_db_connection()
   if (is.null(con)) return(FALSE)

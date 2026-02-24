@@ -109,6 +109,11 @@ run_etl_pipeline <- function(seasons, clear_existing = FALSE) {
     # Enhance statistics with additional metadata
     if (!is.null(player_data)) {
       player_stats <- enhance_player_data(player_stats, player_data, schedule_data)
+      # Filter to skill positions only — removes non-skill players (FB, OL, etc.)
+      # that appear in PBP but aren't relevant to the app
+      before_count <- nrow(player_stats)
+      player_stats <- player_stats %>% filter(position %in% c("QB", "WR", "RB", "TE"))
+      cat(paste("  - Filtered to skill positions:", before_count, "→", nrow(player_stats), "rows\n"))
     }
     
     if (!is.null(schedule_data)) {
@@ -129,7 +134,7 @@ run_etl_pipeline <- function(seasons, clear_existing = FALSE) {
     
     # Load calculated statistics
     player_success <- retry_operation(function() {
-      load_player_stats(player_stats, player_data)
+      load_player_stats(player_stats, player_data, pbp_data)
     })
     
     team_success <- retry_operation(function() {
