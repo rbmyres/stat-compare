@@ -51,10 +51,6 @@ export const ADV_PASSING_COLUMNS: ColumnDef[] = [
   { label: "Air Yds/Comp", key: "pass_air_yards_per_completion", format: (v) => dec(v) },
   { label: "YAC/Att", key: "pass_yac_per_attempt", format: (v) => dec(v) },
   { label: "YAC/Comp", key: "pass_yac_per_completion", format: (v) => dec(v) },
-  { label: "YAC EPA", key: "pass_yac_epa_total", format: epa },
-  { label: "YAC EPA/Att", key: "pass_yac_epa_per_attempt", format: epa },
-  { label: "YAC EPA/Comp", key: "pass_yac_epa_per_completion", format: epa },
-  { label: "YAC EPA/Drop", key: "pass_yac_epa_per_dropback", format: epa },
 ];
 
 // ── RUSHING ──────────────────────────────────────────────────────────
@@ -128,9 +124,6 @@ export const ADV_RECEIVING_COLUMNS: ColumnDef[] = [
   { label: "Air Yd %", key: "rec_air_yard_percent", format: pct },
   { label: "YAC/Rec", key: "rec_yac_per_reception", format: (v) => dec(v) },
   { label: "YAC %", key: "rec_yac_percent", format: pct },
-  { label: "YAC EPA", key: "rec_yac_epa_total", format: epa },
-  { label: "YAC EPA/Tgt", key: "rec_yac_epa_per_target", format: epa },
-  { label: "YAC EPA/Rec", key: "rec_yac_epa_per_reception", format: epa },
 ];
 
 // ── TOTALS ───────────────────────────────────────────────────────────

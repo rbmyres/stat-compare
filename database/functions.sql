@@ -44,8 +44,7 @@ RETURNS TABLE (
     pass_success_total int,
     pass_20_plus int,
     pass_long int,
-    pass_yac_epa_total decimal(8,4),
-    
+
     -- Calculated passing stats (from aggregated totals)
     pass_comp_percent decimal(5,1),
     pass_yards_per_attempt decimal(5,2),
@@ -67,9 +66,6 @@ RETURNS TABLE (
     pass_epa_per_attempt decimal(6,3),
     pass_epa_per_completion decimal(6,3),
     pass_epa_per_dropback decimal(6,3),
-    pass_yac_epa_per_attempt decimal(6,3),
-    pass_yac_epa_per_completion decimal(6,3),
-    pass_yac_epa_per_dropback decimal(6,3),
     pass_rating decimal(5,1),
     
     -- Raw rushing stats (aggregated totals)
@@ -115,7 +111,6 @@ RETURNS TABLE (
     rec_first_downs int,
     rec_epa_total decimal(8,4),
     rec_success_total int,
-    rec_yac_epa_total decimal(8,4),
     rec_20_plus int,
     rec_long int,
     rec_fumbles int,
@@ -135,8 +130,6 @@ RETURNS TABLE (
     rec_epa_per_target decimal(6,3),
     rec_epa_per_reception decimal(6,3),
     rec_success_rate decimal(5,1),
-    rec_yac_epa_per_target decimal(6,3),
-    rec_yac_epa_per_reception decimal(6,3),
     rec_20_plus_rate decimal(5,2),
     rec_yards_per_game decimal(8,1),
     
@@ -208,7 +201,6 @@ BEGIN
             COALESCE(SUM(pw.pass_success_total), 0)::int as agg_pass_success_total,
             COALESCE(SUM(pw.pass_20_plus), 0)::int as agg_pass_20_plus,
             COALESCE(MAX(pw.pass_long), 0)::int as agg_pass_long,
-            COALESCE(SUM(pw.pass_yac_epa_total), 0) as agg_pass_yac_epa_total,
 
             COALESCE(SUM(pw.rush_attempts), 0)::int as agg_rush_attempts,
             COALESCE(SUM(pw.rush_yards), 0)::int as agg_rush_yards,
@@ -237,7 +229,6 @@ BEGIN
             COALESCE(SUM(pw.rec_first_downs), 0)::int as agg_rec_first_downs,
             COALESCE(SUM(pw.rec_epa_total), 0) as agg_rec_epa_total,
             COALESCE(SUM(pw.rec_success_total), 0)::int as agg_rec_success_total,
-            COALESCE(SUM(pw.rec_yac_epa_total), 0) as agg_rec_yac_epa_total,
             COALESCE(SUM(pw.rec_20_plus), 0)::int as agg_rec_20_plus,
             COALESCE(MAX(pw.rec_long), 0)::int as agg_rec_long,
             COALESCE(SUM(pw.rec_fumbles), 0)::int as agg_rec_fumbles,
@@ -315,7 +306,6 @@ BEGIN
         pt.agg_pass_success_total,
         pt.agg_pass_20_plus,
         pt.agg_pass_long,
-        pt.agg_pass_yac_epa_total,
 
         -- Calculated passing stats (from aggregated totals - CORRECT!)
         CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_completions::decimal / pt.agg_pass_attempts * 100, 1) ELSE 0 END,
@@ -338,9 +328,6 @@ BEGIN
         CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_epa::decimal / pt.agg_pass_attempts, 3) ELSE 0 END,
         CASE WHEN pt.agg_pass_completions > 0 THEN ROUND(pt.agg_pass_epa::decimal / pt.agg_pass_completions, 3) ELSE 0 END,
         CASE WHEN pt.agg_pass_qb_dropbacks > 0 THEN ROUND(pt.agg_pass_epa::decimal / pt.agg_pass_qb_dropbacks, 3) ELSE 0 END,
-        CASE WHEN pt.agg_pass_attempts > 0 THEN ROUND(pt.agg_pass_yac_epa_total::decimal / pt.agg_pass_attempts, 3) ELSE 0 END,
-        CASE WHEN pt.agg_pass_completions > 0 THEN ROUND(pt.agg_pass_yac_epa_total::decimal / pt.agg_pass_completions, 3) ELSE 0 END,
-        CASE WHEN pt.agg_pass_qb_dropbacks > 0 THEN ROUND(pt.agg_pass_yac_epa_total::decimal / pt.agg_pass_qb_dropbacks, 3) ELSE 0 END,
         CASE
             WHEN pt.agg_pass_attempts >= 1 THEN 
                 GREATEST(0, LEAST(158.3, ROUND(
@@ -394,7 +381,6 @@ BEGIN
         pt.agg_rec_first_downs,
         pt.agg_rec_epa_total,
         pt.agg_rec_success_total,
-        pt.agg_rec_yac_epa_total,
         pt.agg_rec_20_plus,
         pt.agg_rec_long,
         pt.agg_rec_fumbles,
@@ -414,8 +400,6 @@ BEGIN
         CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_epa_total::decimal / pt.agg_rec_targets, 3) ELSE 0 END,
         CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_epa_total::decimal / pt.agg_rec_receptions, 3) ELSE 0 END,
         CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_success_total::decimal / pt.agg_rec_targets * 100, 1) ELSE 0 END,
-        CASE WHEN pt.agg_rec_targets > 0 THEN ROUND(pt.agg_rec_yac_epa_total::decimal / pt.agg_rec_targets, 3) ELSE 0 END,
-        CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_yac_epa_total::decimal / pt.agg_rec_receptions, 3) ELSE 0 END,
         CASE WHEN pt.agg_rec_receptions > 0 THEN ROUND(pt.agg_rec_20_plus::decimal / pt.agg_rec_receptions * 100, 2) ELSE 0 END,
         CASE WHEN pt.games_played > 0 THEN ROUND(pt.agg_rec_yards::decimal / pt.games_played, 1) ELSE 0 END,
         

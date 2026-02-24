@@ -43,7 +43,6 @@ weekly_stats <- player_receiving %>%
     rec_epa_total = round(sum(ifelse(complete_pass == 1, epa, 0), na.rm = TRUE), 2),
     rec_wpa_total = round(sum(ifelse(complete_pass == 1, wpa, 0), na.rm = TRUE), 2),
     rec_success_total = sum(is_success, na.rm = TRUE),
-    rec_yac_epa_total = round(sum(yac_epa, na.rm = TRUE), 2),
     rec_yac_wpa_total = round(sum(yac_wpa, na.rm = TRUE), 2),
     rec_20_plus = sum(is_20_plus, na.rm = TRUE),
     rec_long = ifelse(any(!is.na(receiving_yards)), max(receiving_yards, na.rm = TRUE), 0),

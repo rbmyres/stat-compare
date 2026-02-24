@@ -92,7 +92,6 @@ transform_player_stats <- function(pbp_data, season) {
       pass_epa = round(sum(ifelse(qb_scramble != 1, epa, 0), na.rm = TRUE), 4),
       pass_success_total = sum(ifelse(success == 1, 1, 0), na.rm = TRUE),
       pass_cpoe_total = round(sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, cpoe, 0), na.rm = TRUE), 4),
-      pass_yac_epa_total = round(sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1 & complete_pass == 1, yac_epa, 0), na.rm = TRUE), 4),
       .groups = "drop"
     )
   
@@ -180,7 +179,6 @@ transform_player_stats <- function(pbp_data, season) {
       rec_first_downs = sum(first_down_pass, na.rm = TRUE),
       rec_epa_total = round(sum(ifelse(complete_pass == 1, epa, 0), na.rm = TRUE), 4),
       rec_success_total = sum(is_success, na.rm = TRUE),
-      rec_yac_epa_total = round(sum(ifelse(complete_pass == 1, yac_epa, 0), na.rm = TRUE), 4),
       rec_20_plus = sum(is_20_plus, na.rm = TRUE),
       rec_long = ifelse(any(!is.na(receiving_yards)), max(receiving_yards, na.rm = TRUE), 0),
       rec_air_yards_total = sum(air_yards, na.rm = TRUE),

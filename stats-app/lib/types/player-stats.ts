@@ -29,7 +29,6 @@ export interface PlayerStats {
   pass_success_total: number;
   pass_20_plus: number;
   pass_long: number;
-  pass_yac_epa_total: number;
 
   // Passing — calculated
   pass_comp_percent: number;
@@ -52,9 +51,6 @@ export interface PlayerStats {
   pass_epa_per_attempt: number;
   pass_epa_per_completion: number;
   pass_epa_per_dropback: number;
-  pass_yac_epa_per_attempt: number;
-  pass_yac_epa_per_completion: number;
-  pass_yac_epa_per_dropback: number;
   pass_rating: number;
 
   // Rushing — raw
@@ -100,7 +96,6 @@ export interface PlayerStats {
   rec_first_downs: number;
   rec_epa_total: number;
   rec_success_total: number;
-  rec_yac_epa_total: number;
   rec_20_plus: number;
   rec_long: number;
   rec_fumbles: number;
@@ -120,8 +115,6 @@ export interface PlayerStats {
   rec_epa_per_target: number;
   rec_epa_per_reception: number;
   rec_success_rate: number;
-  rec_yac_epa_per_target: number;
-  rec_yac_epa_per_reception: number;
   rec_20_plus_rate: number;
   rec_yards_per_game: number;
 

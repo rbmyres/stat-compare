@@ -70,9 +70,7 @@ weekly_stats <- lamar_all_dropbacks %>%
     pass_wpa = round(sum(ifelse(qb_scramble != 1, wpa, 0), na.rm = TRUE), 2),
     pass_success_total = sum(ifelse(success == 1, 1, 0), na.rm = TRUE),
     pass_cpoe_total = round(sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, cpoe, 0), na.rm = TRUE), 2),
-    
-    # Expected YAC metrics
-    pass_yac_epa_total = round(sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, yac_epa, 0), na.rm = TRUE), 2),
+
     pass_yac_wpa_total = round(sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, yac_wpa, 0), na.rm = TRUE), 2),
   ) %>%
   arrange(week) %>%

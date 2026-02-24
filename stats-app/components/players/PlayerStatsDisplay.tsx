@@ -56,10 +56,6 @@ function buildAdvPassing(s: PlayerStats): Stat[] {
     { label: "Air Yds/Comp", value: dec(s.pass_air_yards_per_completion) },
     { label: "YAC/Att", value: dec(s.pass_yac_per_attempt) },
     { label: "YAC/Comp", value: dec(s.pass_yac_per_completion) },
-    { label: "YAC EPA", value: epa(s.pass_yac_epa_total) },
-    { label: "YAC EPA/Att", value: epa(s.pass_yac_epa_per_attempt) },
-    { label: "YAC EPA/Comp", value: epa(s.pass_yac_epa_per_completion) },
-    { label: "YAC EPA/Drop", value: epa(s.pass_yac_epa_per_dropback) },
   ];
 }
 
@@ -141,9 +137,6 @@ function buildAdvReceiving(s: PlayerStats): Stat[] {
     { label: "Air Yd %", value: pct(s.rec_air_yard_percent) },
     { label: "YAC/Rec", value: dec(s.rec_yac_per_reception) },
     { label: "YAC %", value: pct(s.rec_yac_percent) },
-    { label: "YAC EPA", value: epa(s.rec_yac_epa_total) },
-    { label: "YAC EPA/Tgt", value: epa(s.rec_yac_epa_per_target) },
-    { label: "YAC EPA/Rec", value: epa(s.rec_yac_epa_per_reception) },
   ];
 }
 

@@ -62,8 +62,7 @@ CREATE TABLE public.player_week (
   pass_success_total int DEFAULT 0,
   pass_20_plus int DEFAULT 0,
   pass_long int DEFAULT 0,
-  pass_yac_epa_total decimal(8,4) DEFAULT 0,
-  
+
   -- Rushing stats
   rush_attempts int DEFAULT 0,
   rush_yards int DEFAULT 0,
@@ -92,7 +91,6 @@ CREATE TABLE public.player_week (
   rec_first_downs int DEFAULT 0,
   rec_epa_total decimal(8,4) DEFAULT 0,
   rec_success_total int DEFAULT 0,
-  rec_yac_epa_total decimal(8,4) DEFAULT 0,
   rec_20_plus int DEFAULT 0,
   rec_long int DEFAULT 0,
   rec_air_yards_total int DEFAULT 0,
