@@ -18,6 +18,7 @@ RETURNS TABLE (
     player_id varchar(32),
     first_name text,
     last_name text,
+    "position" varchar(5),
     first_season int,
     last_season int,
     
@@ -276,10 +277,13 @@ BEGIN
           AND (p_season_type IS NULL OR w.season_type = ANY(v_season_types))
         GROUP BY pw.player_id, p.first_name, p.last_name, p.first_season, p.last_season
     )
-    SELECT 
+    SELECT
         pt.player_id,
         pt.first_name,
         pt.last_name,
+        (SELECT pw2."position" FROM player_week pw2
+         WHERE pw2.player_id = pt.player_id
+         ORDER BY pw2.season DESC, pw2.week DESC LIMIT 1),
         pt.first_season,
         pt.last_season,
         

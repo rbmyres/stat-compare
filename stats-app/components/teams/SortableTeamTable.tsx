@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { TeamStats } from "@/lib/types/team-stats";
 import type { TeamColumnDef } from "@/lib/team-columns";
-import { num } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { StatTooltip } from "@/components/StatTooltip";
 import { getStatDescription } from "@/lib/stat-definitions";
@@ -32,16 +31,20 @@ export function SortableTeamTable({ teams, columns }: SortableTeamTableProps) {
     return [...teams].sort((a, b) => {
       const aRaw = a[sortKey];
       const bRaw = b[sortKey];
+      const aNum = Number(aRaw);
+      const bNum = Number(bRaw);
 
-      if (typeof aRaw === "string" && typeof bRaw === "string") {
+      // Numeric sort (handles pg decimal strings like "0.123")
+      if (!isNaN(aNum) || !isNaN(bNum)) {
         return sortDir === "asc"
-          ? aRaw.localeCompare(bRaw)
-          : bRaw.localeCompare(aRaw);
+          ? (aNum || 0) - (bNum || 0)
+          : (bNum || 0) - (aNum || 0);
       }
 
-      const aVal = num(aRaw);
-      const bVal = num(bRaw);
-      return sortDir === "asc" ? aVal - bVal : bVal - aVal;
+      // Truly non-numeric strings (e.g., record "12-5")
+      return sortDir === "asc"
+        ? String(aRaw ?? "").localeCompare(String(bRaw ?? ""))
+        : String(bRaw ?? "").localeCompare(String(aRaw ?? ""));
     });
   }, [teams, sortKey, sortDir]);
 

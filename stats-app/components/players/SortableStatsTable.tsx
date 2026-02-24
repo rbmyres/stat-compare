@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import type { PlayerStats } from "@/lib/types/player-stats";
 import type { ColumnDef } from "@/lib/columns";
-import { num } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { StatTooltip } from "@/components/StatTooltip";
 import { getStatDescription } from "@/lib/stat-definitions";
@@ -39,10 +38,11 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
 interface SortableStatsTableProps {
   players: PlayerStats[];
   columns: ColumnDef[];
+  defaultSortKey?: keyof PlayerStats;
 }
 
-export function SortableStatsTable({ players, columns }: SortableStatsTableProps) {
-  const [sortKey, setSortKey] = useState<keyof PlayerStats | null>(null);
+export function SortableStatsTable({ players, columns, defaultSortKey }: SortableStatsTableProps) {
+  const [sortKey, setSortKey] = useState<keyof PlayerStats | null>(defaultSortKey ?? null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -65,17 +65,20 @@ export function SortableStatsTable({ players, columns }: SortableStatsTableProps
     return [...players].sort((a, b) => {
       const aRaw = a[sortKey];
       const bRaw = b[sortKey];
+      const aNum = Number(aRaw);
+      const bNum = Number(bRaw);
 
-      // String fields (like record)
-      if (typeof aRaw === "string" && typeof bRaw === "string") {
+      // Numeric sort (handles pg decimal strings like "0.123")
+      if (!isNaN(aNum) || !isNaN(bNum)) {
         return sortDir === "asc"
-          ? aRaw.localeCompare(bRaw)
-          : bRaw.localeCompare(aRaw);
+          ? (aNum || 0) - (bNum || 0)
+          : (bNum || 0) - (aNum || 0);
       }
 
-      const aVal = num(aRaw);
-      const bVal = num(bRaw);
-      return sortDir === "asc" ? aVal - bVal : bVal - aVal;
+      // Truly non-numeric strings (e.g., record "12-5")
+      return sortDir === "asc"
+        ? String(aRaw ?? "").localeCompare(String(bRaw ?? ""))
+        : String(bRaw ?? "").localeCompare(String(aRaw ?? ""));
     });
   }, [players, sortKey, sortDir]);
 

@@ -3,6 +3,7 @@ export interface PlayerStats {
   player_id: string;
   first_name: string;
   last_name: string;
+  position: string;
   first_season: number;
   last_season: number;
 
