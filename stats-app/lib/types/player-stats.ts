@@ -6,6 +6,7 @@ export interface PlayerStats {
   position: string;
   first_season: number;
   last_season: number;
+  headshot_url: string | null;
 
   // Record
   games_played: number;

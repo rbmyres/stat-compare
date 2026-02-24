@@ -177,9 +177,17 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
                             : "hover:bg-foreground/5"
                         )}
                       >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nfl-navy/10 text-xs font-bold text-nfl-navy">
-                          {result.id}
-                        </span>
+                        {result.image_url ? (
+                          <img
+                            src={result.image_url}
+                            alt=""
+                            className="h-8 w-8 object-contain"
+                          />
+                        ) : (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nfl-navy/10 text-xs font-bold text-nfl-navy">
+                            {result.id}
+                          </span>
+                        )}
                         <div>
                           <div className="font-medium text-foreground">
                             {result.name}
@@ -216,21 +224,29 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
                             : "hover:bg-foreground/5"
                         )}
                       >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-medium text-foreground/60">
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                        </span>
+                        {result.image_url ? (
+                          <img
+                            src={result.image_url}
+                            alt=""
+                            className="h-8 w-8 rounded-full object-cover bg-foreground/5"
+                          />
+                        ) : (
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-medium text-foreground/60">
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                          </span>
+                        )}
                         <div>
                           <div className="font-medium text-foreground">
                             {result.name}

@@ -29,7 +29,8 @@ load_player_data <- function(player_data, season = NULL) {
         last_name,
         position,
         rookie_season,
-        last_season
+        last_season,
+        headshot_url = headshot
       ) %>%
       filter(
         !is.na(player_id),
@@ -86,7 +87,8 @@ load_team_data <- function(team_data) {
         abbr = team_abbr,
         display_name = team_name,
         nickname = team_nick,
-        primary_color = team_color
+        primary_color = team_color,
+        logo_url = team_logo_espn
       ) %>%
       filter(!is.na(team_id)) %>%
       distinct()

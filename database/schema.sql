@@ -14,7 +14,8 @@ CREATE TABLE public.teams (
   abbr text,
   display_name text,
   nickname text,
-  primary_color text
+  primary_color text,
+  logo_url text
 );
 
 CREATE TABLE public.players (
@@ -22,7 +23,8 @@ CREATE TABLE public.players (
   first_name text,
   last_name text,
   first_season int,
-  last_season int
+  last_season int,
+  headshot_url text
 );
 
 CREATE TABLE public.weeks (

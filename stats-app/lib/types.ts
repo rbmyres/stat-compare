@@ -7,6 +7,7 @@ export interface Player {
   last_name: string;
   first_season: number;
   last_season: number;
+  headshot_url: string | null;
 }
 
 export interface Team {
@@ -15,6 +16,7 @@ export interface Team {
   display_name: string;
   nickname: string;
   primary_color: string;
+  logo_url: string | null;
 }
 
 export interface SearchResult {
@@ -22,4 +24,5 @@ export interface SearchResult {
   id: string;
   name: string;
   subtitle: string;
+  image_url?: string;
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { queryOne } from "@/lib/db";
 import { searchParamsCache } from "@/lib/filters/search-params";
@@ -16,7 +17,7 @@ export default async function PlayerDetailPage({
   const filters = await searchParamsCache.parse(searchParams);
 
   const player = await queryOne<Player>(
-    "SELECT player_id, first_name, last_name, first_season, last_season FROM players WHERE player_id = $1",
+    "SELECT player_id, first_name, last_name, first_season, last_season, headshot_url FROM players WHERE player_id = $1",
     [id]
   );
 
@@ -42,13 +43,24 @@ export default async function PlayerDetailPage({
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {player.first_name} {player.last_name}
-        </h1>
-        <p className="mt-1 text-sm text-foreground/50">
-          {position} &middot; Seasons {player.first_season}&ndash;{player.last_season}
-        </p>
+      <div className="mb-8 flex items-center gap-4">
+        {player.headshot_url && (
+          <Image
+            src={player.headshot_url}
+            alt={`${player.first_name} ${player.last_name}`}
+            width={96}
+            height={96}
+            className="rounded-full bg-foreground/5"
+          />
+        )}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {player.first_name} {player.last_name}
+          </h1>
+          <p className="mt-1 text-sm text-foreground/50">
+            {position} &middot; Seasons {player.first_season}&ndash;{player.last_season}
+          </p>
+        </div>
       </div>
 
       {stats && stats.games_played > 0 ? (

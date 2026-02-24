@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { queryOne } from "@/lib/db";
 import { searchParamsCache } from "@/lib/filters/search-params";
@@ -16,7 +17,7 @@ export default async function TeamDetailPage({
   const filters = await searchParamsCache.parse(searchParams);
 
   const team = await queryOne<Team>(
-    "SELECT team_id, abbr, display_name, nickname, primary_color FROM teams WHERE team_id = $1",
+    "SELECT team_id, abbr, display_name, nickname, primary_color, logo_url FROM teams WHERE team_id = $1",
     [id]
   );
 
@@ -34,13 +35,24 @@ export default async function TeamDetailPage({
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {team.display_name}
-        </h1>
-        <p className="mt-1 text-sm text-foreground/50">
-          {team.nickname}
-        </p>
+      <div className="mb-8 flex items-center gap-4">
+        {team.logo_url && (
+          <Image
+            src={team.logo_url}
+            alt={team.display_name}
+            width={72}
+            height={72}
+            className="object-contain"
+          />
+        )}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {team.display_name}
+          </h1>
+          <p className="mt-1 text-sm text-foreground/50">
+            {team.nickname}
+          </p>
+        </div>
       </div>
 
       {stats && Number(stats.games_played) > 0 ? (
