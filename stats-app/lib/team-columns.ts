@@ -69,9 +69,9 @@ export const OFF_ADV_RUSHING_COLUMNS: TeamColumnDef[] = [
   { label: "20+ %", key: "off_rush_20_plus_rate", format: pct },
 ];
 
-// ── OFFENSIVE TOTAL ──────────────────────────────────────────────────
+// ── OFFENSIVE OVERVIEW ───────────────────────────────────────────────
 
-export const OFF_TOTAL_COLUMNS: TeamColumnDef[] = [
+export const OFF_OVERVIEW_COLUMNS: TeamColumnDef[] = [
   { label: "Games", key: "games_played", format: fmt },
   { label: "Record", key: "record", format: (v) => String(v ?? "") },
   { label: "Win %", key: "win_percentage", format: (v) => pct(num(v) * 100) },
@@ -85,6 +85,11 @@ export const OFF_TOTAL_COLUMNS: TeamColumnDef[] = [
   { label: "Fum Lost", key: "off_fumbles_lost", format: fmt },
   { label: "Turnovers", key: "off_turnovers", format: fmt },
   { label: "Explosive", key: "off_explosive_plays", format: fmt },
+];
+
+// ── OFFENSIVE EFFICIENCY ────────────────────────────────────────────
+
+export const OFF_EFFICIENCY_COLUMNS: TeamColumnDef[] = [
   { label: "Yds/Game", key: "off_yards_per_game", format: (v) => dec(v) },
   { label: "Yds/Play", key: "off_yards_per_play", format: (v) => dec(v) },
   { label: "Yds/Drive", key: "off_yards_per_drive", format: (v) => dec(v) },
@@ -185,9 +190,9 @@ export const DEF_ADV_RUSHING_COLUMNS: TeamColumnDef[] = [
   { label: "20+ %", key: "def_rush_20_plus_rate", format: pct },
 ];
 
-// ── DEFENSIVE TOTAL ──────────────────────────────────────────────────
+// ── DEFENSIVE OVERVIEW ───────────────────────────────────────────────
 
-export const DEF_TOTAL_COLUMNS: TeamColumnDef[] = [
+export const DEF_OVERVIEW_COLUMNS: TeamColumnDef[] = [
   { label: "Plays", key: "def_plays_total", format: fmt },
   { label: "Drives", key: "def_drives_total", format: fmt },
   { label: "Yards", key: "def_yards_total", format: fmt },
@@ -198,6 +203,11 @@ export const DEF_TOTAL_COLUMNS: TeamColumnDef[] = [
   { label: "Fum Lost", key: "def_fumbles_lost", format: fmt },
   { label: "Turnovers", key: "def_turnovers", format: fmt },
   { label: "Explosive", key: "def_explosive_plays", format: fmt },
+];
+
+// ── DEFENSIVE EFFICIENCY ────────────────────────────────────────────
+
+export const DEF_EFFICIENCY_COLUMNS: TeamColumnDef[] = [
   { label: "Yds/Game", key: "def_yards_per_game", format: (v) => dec(v) },
   { label: "Yds/Play", key: "def_yards_per_play", format: (v) => dec(v) },
   { label: "Yds/Drive", key: "def_yards_per_drive", format: (v) => dec(v) },

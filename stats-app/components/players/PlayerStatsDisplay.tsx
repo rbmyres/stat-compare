@@ -88,6 +88,13 @@ function buildAdvRushing(s: PlayerStats): Stat[] {
     { label: "Stuff %", value: pct(s.rush_stuff_rate) },
     { label: "10+ %", value: pct(s.rush_10_plus_rate) },
     { label: "20+ %", value: pct(s.rush_20_plus_rate) },
+  ];
+}
+
+// ── SCRAMBLING (QB only) ────────────────────────────────────────────
+
+function buildScrambling(s: PlayerStats): Stat[] {
+  return [
     { label: "Scramble Att", value: fmt(s.qb_scramble_attempts) },
     { label: "Scramble Yds", value: fmt(s.qb_scramble_yards) },
     { label: "Scramble TD", value: fmt(s.qb_scramble_tds) },
@@ -140,9 +147,9 @@ function buildAdvReceiving(s: PlayerStats): Stat[] {
   ];
 }
 
-// ── TOTALS ───────────────────────────────────────────────────────────
+// ── OVERVIEW ────────────────────────────────────────────────────────
 
-function buildTotals(s: PlayerStats): Stat[] {
+function buildOverview(s: PlayerStats): Stat[] {
   return [
     { label: "Games", value: fmt(s.games_played) },
     { label: "Record", value: s.record },
@@ -159,6 +166,14 @@ function buildTotals(s: PlayerStats): Stat[] {
     { label: "EPA/Play", value: epa(s.total_epa_per_play) },
     { label: "Success Plays", value: fmt(s.total_success_plays) },
     { label: "Success %", value: pct(s.total_success_rate) },
+  ];
+}
+
+// ── SCRIMMAGE & FANTASY ─────────────────────────────────────────────
+
+function buildScrimFantasy(s: PlayerStats): Stat[] {
+  return [
+    { label: "PPR Points", value: dec(s.ppr_points) },
     { label: "Scrim Touches", value: fmt(s.scrim_touches) },
     { label: "Scrim Yards", value: fmt(s.scrim_yards) },
     { label: "Scrim TD", value: fmt(s.scrim_touchdowns) },
@@ -169,7 +184,6 @@ function buildTotals(s: PlayerStats): Stat[] {
     { label: "Scrim EPA/Play", value: epa(s.scrim_epa_per_play) },
     { label: "Scrim Success", value: fmt(s.scrim_success_total) },
     { label: "Scrim Success %", value: pct(s.scrim_success_rate) },
-    { label: "PPR Points", value: dec(s.ppr_points) },
   ];
 }
 
@@ -213,6 +227,13 @@ export function PlayerStatsDisplay({ stats, position }: PlayerStatsDisplayProps)
     show: num(stats.rush_attempts) > 0,
   };
 
+  const scrambling: Section = {
+    key: "scrambling",
+    title: "Scrambling",
+    stats: buildScrambling(stats),
+    show: pos === "QB" && num(stats.qb_scramble_attempts) > 0,
+  };
+
   const receiving: Section = {
     key: "receiving",
     title: "Receiving",
@@ -227,22 +248,29 @@ export function PlayerStatsDisplay({ stats, position }: PlayerStatsDisplayProps)
     show: num(stats.rec_targets) > 0,
   };
 
-  const totals: Section = {
-    key: "totals",
-    title: "Totals & Scrimmage",
-    stats: buildTotals(stats),
+  const overview: Section = {
+    key: "overview",
+    title: "Overview",
+    stats: buildOverview(stats),
+    show: true,
+  };
+
+  const scrimFantasy: Section = {
+    key: "scrim-fantasy",
+    title: "Scrimmage & Fantasy",
+    stats: buildScrimFantasy(stats),
     show: true,
   };
 
   let sections: Section[];
 
   if (pos === "QB") {
-    sections = [passing, advPassing, rushing, advRushing, receiving, advReceiving, totals];
+    sections = [passing, advPassing, rushing, advRushing, scrambling, receiving, advReceiving, overview, scrimFantasy];
   } else if (pos === "RB") {
-    sections = [rushing, advRushing, receiving, advReceiving, passing, advPassing, totals];
+    sections = [rushing, advRushing, receiving, advReceiving, passing, advPassing, overview, scrimFantasy];
   } else {
     // WR, TE, and any other position
-    sections = [receiving, advReceiving, rushing, advRushing, passing, advPassing, totals];
+    sections = [receiving, advReceiving, rushing, advRushing, passing, advPassing, overview, scrimFantasy];
   }
 
   const visible = sections.filter((s) => s.show);

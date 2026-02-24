@@ -78,9 +78,9 @@ function buildOffAdvRushing(s: TeamStats): Stat[] {
   ];
 }
 
-// ── OFFENSIVE TOTAL ──────────────────────────────────────────────────
+// ── OFFENSIVE OVERVIEW ───────────────────────────────────────────────
 
-function buildOffTotal(s: TeamStats): Stat[] {
+function buildOffOverview(s: TeamStats): Stat[] {
   return [
     { label: "Games", value: fmt(s.games_played) },
     { label: "Record", value: s.record },
@@ -95,6 +95,13 @@ function buildOffTotal(s: TeamStats): Stat[] {
     { label: "Fum Lost", value: fmt(s.off_fumbles_lost) },
     { label: "Turnovers", value: fmt(s.off_turnovers) },
     { label: "Explosive", value: fmt(s.off_explosive_plays) },
+  ];
+}
+
+// ── OFFENSIVE EFFICIENCY ────────────────────────────────────────────
+
+function buildOffEfficiency(s: TeamStats): Stat[] {
+  return [
     { label: "Yds/Game", value: dec(s.off_yards_per_game) },
     { label: "Yds/Play", value: dec(s.off_yards_per_play) },
     { label: "Yds/Drive", value: dec(s.off_yards_per_drive) },
@@ -206,9 +213,9 @@ function buildDefAdvRushing(s: TeamStats): Stat[] {
   ];
 }
 
-// ── DEFENSIVE TOTAL ──────────────────────────────────────────────────
+// ── DEFENSIVE OVERVIEW ───────────────────────────────────────────────
 
-function buildDefTotal(s: TeamStats): Stat[] {
+function buildDefOverview(s: TeamStats): Stat[] {
   return [
     { label: "Plays", value: fmt(s.def_plays_total) },
     { label: "Drives", value: fmt(s.def_drives_total) },
@@ -220,6 +227,13 @@ function buildDefTotal(s: TeamStats): Stat[] {
     { label: "Fum Lost", value: fmt(s.def_fumbles_lost) },
     { label: "Turnovers", value: fmt(s.def_turnovers) },
     { label: "Explosive", value: fmt(s.def_explosive_plays) },
+  ];
+}
+
+// ── DEFENSIVE EFFICIENCY ────────────────────────────────────────────
+
+function buildDefEfficiency(s: TeamStats): Stat[] {
+  return [
     { label: "Yds/Game", value: dec(s.def_yards_per_game) },
     { label: "Yds/Play", value: dec(s.def_yards_per_play) },
     { label: "Yds/Drive", value: dec(s.def_yards_per_drive) },
@@ -265,13 +279,15 @@ function buildDefSituational(s: TeamStats): Stat[] {
 
 export function TeamStatsDisplay({ stats }: TeamStatsDisplayProps) {
   const sections = [
-    { key: "off-total", title: "Offensive Total", stats: buildOffTotal(stats) },
+    { key: "off-overview", title: "Offensive Overview", stats: buildOffOverview(stats) },
+    { key: "off-efficiency", title: "Offensive Efficiency", stats: buildOffEfficiency(stats) },
     { key: "off-passing", title: "Offensive Passing", stats: buildOffPassing(stats) },
     { key: "off-adv-passing", title: "Offensive Adv. Passing", stats: buildOffAdvPassing(stats) },
     { key: "off-rushing", title: "Offensive Rushing", stats: buildOffRushing(stats) },
     { key: "off-adv-rushing", title: "Offensive Adv. Rushing", stats: buildOffAdvRushing(stats) },
     { key: "off-situational", title: "Offensive Situational", stats: buildOffSituational(stats) },
-    { key: "def-total", title: "Defensive Total", stats: buildDefTotal(stats) },
+    { key: "def-overview", title: "Defensive Overview", stats: buildDefOverview(stats) },
+    { key: "def-efficiency", title: "Defensive Efficiency", stats: buildDefEfficiency(stats) },
     { key: "def-passing", title: "Defensive Passing", stats: buildDefPassing(stats) },
     { key: "def-adv-passing", title: "Defensive Adv. Passing", stats: buildDefAdvPassing(stats) },
     { key: "def-rushing", title: "Defensive Rushing", stats: buildDefRushing(stats) },

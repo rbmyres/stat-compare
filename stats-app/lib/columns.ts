@@ -79,6 +79,11 @@ export const ADV_RUSHING_COLUMNS: ColumnDef[] = [
   { label: "Stuff %", key: "rush_stuff_rate", format: pct },
   { label: "10+ %", key: "rush_10_plus_rate", format: pct },
   { label: "20+ %", key: "rush_20_plus_rate", format: pct },
+];
+
+// ── SCRAMBLING (QB only) ────────────────────────────────────────────
+
+export const SCRAMBLING_COLUMNS: ColumnDef[] = [
   { label: "Scramble Att", key: "qb_scramble_attempts", format: fmt },
   { label: "Scramble Yds", key: "qb_scramble_yards", format: fmt },
   { label: "Scramble TD", key: "qb_scramble_tds", format: fmt },
@@ -126,9 +131,9 @@ export const ADV_RECEIVING_COLUMNS: ColumnDef[] = [
   { label: "YAC %", key: "rec_yac_percent", format: pct },
 ];
 
-// ── TOTALS ───────────────────────────────────────────────────────────
+// ── OVERVIEW ────────────────────────────────────────────────────────
 
-export const TOTALS_COLUMNS: ColumnDef[] = [
+export const OVERVIEW_COLUMNS: ColumnDef[] = [
   { label: "Games", key: "games_played", format: fmt },
   { label: "Record", key: "record", format: (v) => String(v ?? "") },
   { label: "Win %", key: "win_percentage", format: (v) => pct(num(v) * 100) },
@@ -144,6 +149,12 @@ export const TOTALS_COLUMNS: ColumnDef[] = [
   { label: "EPA/Play", key: "total_epa_per_play", format: epa },
   { label: "Success Plays", key: "total_success_plays", format: fmt },
   { label: "Success %", key: "total_success_rate", format: pct },
+];
+
+// ── SCRIMMAGE & FANTASY ─────────────────────────────────────────────
+
+export const SCRIMMAGE_FANTASY_COLUMNS: ColumnDef[] = [
+  { label: "PPR Points", key: "ppr_points", format: (v) => dec(v) },
   { label: "Scrim Touches", key: "scrim_touches", format: fmt },
   { label: "Scrim Yards", key: "scrim_yards", format: fmt },
   { label: "Scrim TD", key: "scrim_touchdowns", format: fmt },
@@ -154,5 +165,4 @@ export const TOTALS_COLUMNS: ColumnDef[] = [
   { label: "Scrim EPA/Play", key: "scrim_epa_per_play", format: epa },
   { label: "Scrim Success", key: "scrim_success_total", format: fmt },
   { label: "Scrim Success %", key: "scrim_success_rate", format: pct },
-  { label: "PPR Points", key: "ppr_points", format: (v) => dec(v) },
 ];

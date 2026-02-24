@@ -9,18 +9,19 @@ import {
   ADV_RUSHING_COLUMNS,
   RECEIVING_COLUMNS,
   ADV_RECEIVING_COLUMNS,
-  TOTALS_COLUMNS,
+  OVERVIEW_COLUMNS,
+  SCRIMMAGE_FANTASY_COLUMNS,
 } from "@/lib/columns";
 import { SortableStatsTable } from "./SortableStatsTable";
 import { BasicAdvancedToggle } from "./BasicAdvancedToggle";
 
-export type StatCategory = "passing" | "rushing" | "receiving" | "totals";
+export type StatCategory = "passing" | "rushing" | "receiving" | "overview";
 
 const COLUMN_MAP = {
   passing: { basic: PASSING_COLUMNS, advanced: ADV_PASSING_COLUMNS },
   rushing: { basic: RUSHING_COLUMNS, advanced: ADV_RUSHING_COLUMNS },
   receiving: { basic: RECEIVING_COLUMNS, advanced: ADV_RECEIVING_COLUMNS },
-  totals: { basic: TOTALS_COLUMNS },
+  overview: { basic: OVERVIEW_COLUMNS, advanced: SCRIMMAGE_FANTASY_COLUMNS },
 } as const;
 
 interface StatsPageClientProps {

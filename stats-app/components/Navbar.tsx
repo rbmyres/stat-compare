@@ -20,7 +20,7 @@ const NAV_LINKS: NavItem[] = [
       { href: "/players/passing", label: "Passing" },
       { href: "/players/rushing", label: "Rushing" },
       { href: "/players/receiving", label: "Receiving" },
-      { href: "/players/totals", label: "Totals" },
+      { href: "/players/overview", label: "Overview" },
     ],
   },
   {
@@ -29,7 +29,7 @@ const NAV_LINKS: NavItem[] = [
     children: [
       { href: "/teams/passing", label: "Passing" },
       { href: "/teams/rushing", label: "Rushing" },
-      { href: "/teams/total", label: "Total" },
+      { href: "/teams/overview", label: "Overview" },
       { href: "/teams/situational", label: "Situational" },
     ],
   },

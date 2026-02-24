@@ -4,7 +4,7 @@ import { filterSchema, toDbParams } from "@/lib/filters/validation";
 import { TeamStatsPageClient } from "@/components/teams/TeamStatsPageClient";
 import type { TeamStats } from "@/lib/types/team-stats";
 
-export default async function TeamTotalPage({
+export default async function TeamOverviewPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -21,8 +21,8 @@ export default async function TeamTotalPage({
   return (
     <TeamStatsPageClient
       teams={teams}
-      title="Team Total Stats"
-      category="total"
+      title="Team Overview Stats"
+      category="overview"
     />
   );
 }

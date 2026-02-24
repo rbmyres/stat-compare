@@ -8,20 +8,22 @@ import {
   OFF_ADV_PASSING_COLUMNS,
   OFF_RUSHING_COLUMNS,
   OFF_ADV_RUSHING_COLUMNS,
-  OFF_TOTAL_COLUMNS,
+  OFF_OVERVIEW_COLUMNS,
+  OFF_EFFICIENCY_COLUMNS,
   OFF_SITUATIONAL_COLUMNS,
   DEF_PASSING_COLUMNS,
   DEF_ADV_PASSING_COLUMNS,
   DEF_RUSHING_COLUMNS,
   DEF_ADV_RUSHING_COLUMNS,
-  DEF_TOTAL_COLUMNS,
+  DEF_OVERVIEW_COLUMNS,
+  DEF_EFFICIENCY_COLUMNS,
   DEF_SITUATIONAL_COLUMNS,
 } from "@/lib/team-columns";
 import { SortableTeamTable } from "./SortableTeamTable";
 import { OffDefToggle } from "./OffDefToggle";
 import { BasicAdvancedToggle } from "@/components/players/BasicAdvancedToggle";
 
-export type TeamStatCategory = "passing" | "rushing" | "total" | "situational";
+export type TeamStatCategory = "passing" | "rushing" | "overview" | "situational";
 
 type ColumnSet = {
   basic: TeamColumnDef[];
@@ -37,9 +39,9 @@ const COLUMN_MAP: Record<TeamStatCategory, { offense: ColumnSet; defense: Column
     offense: { basic: OFF_RUSHING_COLUMNS, advanced: OFF_ADV_RUSHING_COLUMNS },
     defense: { basic: DEF_RUSHING_COLUMNS, advanced: DEF_ADV_RUSHING_COLUMNS },
   },
-  total: {
-    offense: { basic: OFF_TOTAL_COLUMNS },
-    defense: { basic: DEF_TOTAL_COLUMNS },
+  overview: {
+    offense: { basic: OFF_OVERVIEW_COLUMNS, advanced: OFF_EFFICIENCY_COLUMNS },
+    defense: { basic: DEF_OVERVIEW_COLUMNS, advanced: DEF_EFFICIENCY_COLUMNS },
   },
   situational: {
     offense: { basic: OFF_SITUATIONAL_COLUMNS },
