@@ -17,7 +17,7 @@ interface ComparisonTableProps {
   mode: CompareMode;
 }
 
-function getBestIndices(
+export function getBestIndices(
   values: unknown[],
   key: string
 ): Set<number> {

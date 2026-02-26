@@ -24,7 +24,7 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT;
 }
 
-function escapeLike(str: string): string {
+export function escapeLike(str: string): string {
   return str.replace(/[%_\\]/g, "\\$&");
 }
 
