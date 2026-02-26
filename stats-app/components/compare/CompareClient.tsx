@@ -3,7 +3,6 @@
 import { useRef, useTransition } from "react";
 import { useQueryStates } from "nuqs";
 import { compareParsers, type CompareMode } from "@/lib/filters/compare-params";
-import { getDefaultStats } from "@/lib/compare-categories";
 import { EntitySelector, type CompareEntity } from "./EntitySelector";
 import { StatPicker } from "./StatPicker";
 import { ComparisonTable } from "./ComparisonTable";
@@ -40,10 +39,7 @@ export function CompareClient({
 
   function handleAddEntity(entity: CompareEntity) {
     if (params.ids.length >= 4 || params.ids.includes(entity.id)) return;
-    const newIds = [...params.ids, entity.id];
-    const newStats =
-      params.stats.length === 0 ? getDefaultStats(params.mode) : params.stats;
-    updateParams({ ids: newIds, stats: newStats });
+    updateParams({ ids: [...params.ids, entity.id] });
   }
 
   function handleRemoveEntity(id: string) {

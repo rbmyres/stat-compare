@@ -985,6 +985,15 @@ export function getStatDescription(key: string): string | undefined {
   return getStatDefinition(key)?.description;
 }
 
+/** Display label with (Off)/(Def) suffix for team stat keys. */
+export function getStatDisplayLabel(key: string): string {
+  const def = getStatDefinition(key);
+  const base = def?.label ?? key;
+  if (key.startsWith("off_")) return `${base} (Off)`;
+  if (key.startsWith("def_")) return `${base} (Def)`;
+  return base;
+}
+
 // ── Glossary page categories ────────────────────────────────────────
 
 export const GLOSSARY_CATEGORIES: GlossaryCategory[] = [

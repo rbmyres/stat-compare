@@ -96,34 +96,6 @@ export function getCompareCategories(mode: CompareMode): CompareCategory[] {
     : TEAM_COMPARE_CATEGORIES;
 }
 
-// Defaults auto-applied when the first entity is added
-export const DEFAULT_PLAYER_STATS = [
-  "games_played",
-  "pass_yards",
-  "pass_touchdowns",
-  "pass_rating",
-  "rush_yards",
-  "rush_touchdowns",
-  "rec_yards",
-  "rec_touchdowns",
-  "total_epa",
-];
-
-export const DEFAULT_TEAM_STATS = [
-  "games_played",
-  "record",
-  "off_yards_total",
-  "off_points_total",
-  "off_epa_per_play",
-  "def_yards_total",
-  "def_points_total",
-  "def_epa_per_play",
-];
-
-export function getDefaultStats(mode: CompareMode): string[] {
-  return mode === "player" ? DEFAULT_PLAYER_STATS : DEFAULT_TEAM_STATS;
-}
-
 /** Stats where lower values are better (for best-value highlighting). */
 export const LOWER_IS_BETTER = new Set([
   // Player

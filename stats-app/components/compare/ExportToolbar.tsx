@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import type { CompareMode } from "@/lib/filters/compare-params";
 import type { CompareEntity } from "./EntitySelector";
 import { formatStatValue } from "@/lib/compare-format-map";
-import { getStatDefinition } from "@/lib/stat-definitions";
+import { getStatDisplayLabel } from "@/lib/stat-definitions";
 
 interface ExportToolbarProps {
   tableRef: React.RefObject<HTMLDivElement | null>;
@@ -44,8 +44,7 @@ export function ExportToolbar({
       ...entities.map((e) => e.name),
     ];
     const rows = stats.map((key) => {
-      const def = getStatDefinition(key);
-      const label = def?.label ?? key;
+      const label = getStatDisplayLabel(key);
       const values = entities.map((e) =>
         formatStatValue(key, entityStats[e.id]?.[key], mode)
       );

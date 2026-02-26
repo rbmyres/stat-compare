@@ -3,7 +3,7 @@
 import type { CompareMode } from "@/lib/filters/compare-params";
 import type { CompareEntity } from "./EntitySelector";
 import { formatStatValue } from "@/lib/compare-format-map";
-import { getStatDefinition } from "@/lib/stat-definitions";
+import { getStatDefinition, getStatDisplayLabel } from "@/lib/stat-definitions";
 import { LOWER_IS_BETTER } from "@/lib/compare-categories";
 import { StatTooltip } from "@/components/StatTooltip";
 import { cn } from "@/lib/utils/cn";
@@ -118,7 +118,7 @@ export function ComparisonTable({
                     position="bottom"
                   >
                     <span className="text-xs font-medium cursor-help">
-                      {def?.label ?? key}
+                      {getStatDisplayLabel(key)}
                     </span>
                   </StatTooltip>
                 </td>
