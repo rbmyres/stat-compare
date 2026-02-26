@@ -16,12 +16,7 @@ const sections = [
     title: "Compare",
     description: "Compare players or teams side by side.",
   },
-  {
-    href: "/graph",
-    title: "Graph",
-    description: "Visualize trends and performance over time.",
-  },
-  {
+{
     href: "/glossary",
     title: "Glossary",
     description: "Definitions for every stat and metric.",

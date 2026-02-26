@@ -34,7 +34,6 @@ const NAV_LINKS: NavItem[] = [
     ],
   },
   { href: "/compare", label: "Compare" },
-  { href: "/graph", label: "Graph" },
   { href: "/glossary", label: "Glossary" },
 ];
 
