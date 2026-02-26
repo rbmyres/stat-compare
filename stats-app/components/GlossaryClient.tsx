@@ -50,13 +50,13 @@ export function GlossaryClient() {
             Definitions for every stat and metric used across the app.
           </p>
         </div>
-        <div className="flex rounded-lg border border-foreground/10 p-0.5">
+        <div className="inline-flex self-start rounded-lg border border-foreground/10 p-0.5">
           {(["player", "team"] as const).map((m) => (
             <button
               key={m}
               onClick={() => setMode(m)}
               className={cn(
-                "rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
+                "cursor-pointer rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
                 mode === m
                   ? "bg-nfl-navy text-white"
                   : "text-foreground/60 hover:text-foreground"

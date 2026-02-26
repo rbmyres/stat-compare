@@ -75,13 +75,13 @@ export function CompareClient({
       {/* Header + mode toggle */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Compare</h1>
-        <div className="no-print flex rounded-lg border border-foreground/10 p-0.5">
+        <div className="no-print inline-flex self-start rounded-lg border border-foreground/10 p-0.5">
           {(["player", "team"] as const).map((m) => (
             <button
               key={m}
               onClick={() => handleModeChange(m)}
               className={cn(
-                "rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
+                "cursor-pointer rounded-md px-4 py-1.5 text-sm font-medium transition-colors",
                 mode === m
                   ? "bg-nfl-navy text-white"
                   : "text-foreground/60 hover:text-foreground"
