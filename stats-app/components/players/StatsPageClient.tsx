@@ -111,10 +111,20 @@ export function StatsPageClient({
       {filtered.length > 0 ? (
         <SortableStatsTable players={filtered} columns={columns} defaultSortKey={DEFAULT_SORT[category]} />
       ) : (
-        <div className="rounded-lg border border-foreground/10 p-6">
+        <div className="rounded-lg border border-foreground/10 p-6 text-center">
           <p className="text-foreground/50">
             No stats found for the selected filters.
           </p>
+          <button
+            type="button"
+            onClick={() => {
+              setPositions(new Set(POSITIONS));
+              setMinimum(0);
+            }}
+            className="mt-3 text-sm font-medium text-nfl-navy hover:underline"
+          >
+            Reset filters
+          </button>
         </div>
       )}
     </div>

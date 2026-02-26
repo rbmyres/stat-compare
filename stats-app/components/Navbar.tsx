@@ -72,11 +72,27 @@ function NavDropdown({
   isActive: boolean;
 }) {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="group relative">
+    <div
+      className="group relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
       <Link
         href={item.href}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" || e.key === "Enter") {
+            e.preventDefault();
+            setOpen(true);
+            // Focus the first dropdown link
+            const first = e.currentTarget
+              .closest(".group")
+              ?.querySelector<HTMLAnchorElement>("[data-dropdown-item]");
+            first?.focus();
+          }
+        }}
         className={cn(
           "relative flex cursor-pointer items-center gap-1 px-3 py-1.5 text-[13px] font-medium tracking-wide uppercase transition-colors duration-150",
           isActive ? "text-white" : "text-white/50 hover:text-white/80"
@@ -102,17 +118,47 @@ function NavDropdown({
       </Link>
 
       {/* Dropdown panel */}
-      <div className="invisible absolute left-0 top-full pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100">
-        <div className="min-w-[140px] rounded-md border border-white/10 bg-[#013369] py-1 shadow-lg">
-          {item.children!.map((child) => (
+      <div
+        className={cn(
+          "absolute left-0 top-full pt-2 transition-all duration-150",
+          open
+            ? "visible opacity-100"
+            : "invisible opacity-0 group-hover:visible group-hover:opacity-100"
+        )}
+      >
+        <div
+          className="min-w-[140px] rounded-md border border-white/10 bg-[#013369] py-1 shadow-lg"
+          role="menu"
+        >
+          {item.children!.map((child, i) => (
             <Link
               key={child.href}
               href={child.href}
+              data-dropdown-item
+              role="menuitem"
+              onBlur={(e) => {
+                // Close dropdown when focus leaves the last item
+                if (i === item.children!.length - 1 && !e.currentTarget.closest(".group")?.contains(e.relatedTarget as Node)) {
+                  setOpen(false);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  (e.currentTarget.nextElementSibling as HTMLElement)?.focus();
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  (e.currentTarget.previousElementSibling as HTMLElement)?.focus();
+                } else if (e.key === "Escape") {
+                  setOpen(false);
+                  e.currentTarget.closest(".group")?.querySelector<HTMLAnchorElement>("a")?.focus();
+                }
+              }}
               className={cn(
                 "block px-4 py-2 text-[12px] font-medium tracking-wide transition-colors",
                 pathname === child.href
                   ? "bg-white/10 text-white"
-                  : "text-white/60 hover:bg-white/5 hover:text-white"
+                  : "text-white/60 hover:bg-white/5 hover:text-white focus:bg-white/5 focus:text-white focus:outline-none"
               )}
             >
               {child.label}

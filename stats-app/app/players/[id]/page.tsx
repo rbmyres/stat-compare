@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { queryOne } from "@/lib/db";
@@ -5,6 +6,24 @@ import { searchParamsCache } from "@/lib/filters/search-params";
 import { filterSchema, toDbParams } from "@/lib/filters/validation";
 import { PlayerStatsDisplay } from "@/components/players/PlayerStatsDisplay";
 import type { Player, PlayerStats } from "@/lib/types";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const player = await queryOne<Player>(
+    "SELECT first_name, last_name FROM players WHERE player_id = $1",
+    [id]
+  );
+  if (!player) return { title: "Player Not Found | StatCompare" };
+  const name = `${player.first_name} ${player.last_name}`;
+  return {
+    title: `${name} Stats | StatCompare`,
+    description: `View detailed NFL statistics for ${name}.`,
+  };
+}
 
 export default async function PlayerDetailPage({
   params,

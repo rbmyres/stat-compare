@@ -15,6 +15,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -32,6 +33,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
     setActiveIndex(-1);
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    abortRef.current?.abort();
 
     if (value.length < 2) {
       setResults([]);
@@ -42,15 +44,23 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
 
     setIsLoading(true);
     debounceRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      abortRef.current = controller;
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(value)}`);
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(value)}`,
+          { signal: controller.signal }
+        );
         const data = await res.json();
         setResults(data.results || []);
         setIsOpen(true);
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setResults([]);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }, 300);
   }
@@ -182,6 +192,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
                             src={result.image_url}
                             alt=""
                             className="h-8 w-8 object-contain"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
                           />
                         ) : (
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nfl-navy/10 text-xs font-bold text-nfl-navy">
@@ -229,6 +240,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
                             src={result.image_url}
                             alt=""
                             className="h-8 w-8 rounded-full object-cover bg-foreground/5"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
                           />
                         ) : (
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-medium text-foreground/60">

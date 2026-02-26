@@ -6,28 +6,49 @@ const pool = new Pool({
   database: process.env.DB_NAME || "stats_db",
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+  ssl:
+    process.env.DB_SSL === "true"
+      ? { rejectUnauthorized: process.env.NODE_ENV === "production" }
+      : false,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
+  statement_timeout: 10000,
 });
 
 pool.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
 });
 
+export class DatabaseError extends Error {
+  constructor(message: string, public readonly cause?: unknown) {
+    super(message);
+    this.name = "DatabaseError";
+  }
+}
+
 export async function query<T>(
   text: string,
   params?: unknown[]
 ): Promise<T[]> {
-  const result = await pool.query(text, params);
-  return result.rows as T[];
+  try {
+    const result = await pool.query(text, params);
+    return result.rows as T[];
+  } catch (err) {
+    console.error("Database query error:", err);
+    throw new DatabaseError("Failed to fetch data", err);
+  }
 }
 
 export async function queryOne<T>(
   text: string,
   params?: unknown[]
 ): Promise<T | null> {
-  const result = await pool.query(text, params);
-  return (result.rows[0] as T) || null;
+  try {
+    const result = await pool.query(text, params);
+    return (result.rows[0] as T) || null;
+  } catch (err) {
+    console.error("Database query error:", err);
+    throw new DatabaseError("Failed to fetch data", err);
+  }
 }

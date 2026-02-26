@@ -33,6 +33,7 @@ export function EntitySelector({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const canAdd = entities.length < 4;
 
@@ -55,6 +56,7 @@ export function EntitySelector({
     setActiveIndex(-1);
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    abortRef.current?.abort();
 
     if (value.length < 2) {
       setResults([]);
@@ -65,9 +67,12 @@ export function EntitySelector({
 
     setIsLoading(true);
     debounceRef.current = setTimeout(async () => {
+      const controller = new AbortController();
+      abortRef.current = controller;
       try {
         const res = await fetch(
-          `/api/search?q=${encodeURIComponent(value)}&type=${mode}`
+          `/api/search?q=${encodeURIComponent(value)}&type=${mode}`,
+          { signal: controller.signal }
         );
         const data = await res.json();
         const filtered = (data.results || []).filter(
@@ -76,10 +81,13 @@ export function EntitySelector({
         );
         setResults(filtered);
         setIsOpen(true);
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setResults([]);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }, 300);
   }

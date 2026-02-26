@@ -91,6 +91,9 @@ export function StatTooltip({
       ref={ref}
       onMouseEnter={show}
       onMouseLeave={hide}
+      onFocus={show}
+      onBlur={hide}
+      tabIndex={0}
       className="inline-flex items-center"
     >
       {children}

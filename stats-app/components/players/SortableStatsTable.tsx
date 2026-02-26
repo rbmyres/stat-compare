@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { PlayerStats } from "@/lib/types/player-stats";
 import type { ColumnDef } from "@/lib/columns";
 import { cn } from "@/lib/utils/cn";
+import { parseRecord } from "@/lib/utils/format";
 import { StatTooltip } from "@/components/StatTooltip";
 import { getStatDescription } from "@/lib/stat-definitions";
 
@@ -65,6 +66,8 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
     return [...players].sort((a, b) => {
       const aRaw = a[sortKey];
       const bRaw = b[sortKey];
+      const aStr = String(aRaw ?? "");
+      const bStr = String(bRaw ?? "");
       const aNum = Number(aRaw);
       const bNum = Number(bRaw);
 
@@ -75,10 +78,17 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
           : (bNum || 0) - (aNum || 0);
       }
 
-      // Truly non-numeric strings (e.g., record "12-5")
+      // Record sort (e.g., "12-5", "9-8")
+      const aRec = parseRecord(aStr);
+      const bRec = parseRecord(bStr);
+      if (!isNaN(aRec) && !isNaN(bRec)) {
+        return sortDir === "asc" ? aRec - bRec : bRec - aRec;
+      }
+
+      // Fallback string sort
       return sortDir === "asc"
-        ? String(aRaw ?? "").localeCompare(String(bRaw ?? ""))
-        : String(bRaw ?? "").localeCompare(String(aRaw ?? ""));
+        ? aStr.localeCompare(bStr)
+        : bStr.localeCompare(aStr);
     });
   }, [players, sortKey, sortDir]);
 

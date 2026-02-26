@@ -16,32 +16,34 @@ interface ComparisonTableProps {
   mode: CompareMode;
 }
 
-function getBestIndex(
+function getBestIndices(
   values: unknown[],
   key: string
-): number | null {
+): Set<number> {
   const lowerBetter = LOWER_IS_BETTER.has(key);
-  let bestIdx: number | null = null;
   let bestVal = lowerBetter ? Infinity : -Infinity;
+  const validIndices: number[] = [];
 
   for (let i = 0; i < values.length; i++) {
-    const n = num(values[i]);
     if (isNaN(Number(values[i])) || values[i] === null || values[i] === undefined) continue;
+    const n = num(values[i]);
+    validIndices.push(i);
     if (lowerBetter ? n < bestVal : n > bestVal) {
       bestVal = n;
-      bestIdx = i;
     }
   }
 
-  // Don't highlight if all values are equal
-  const numericValues = values.filter(
-    (v) => !isNaN(Number(v)) && v !== null && v !== undefined
-  );
-  if (numericValues.length < 2) return null;
-  const allEqual = numericValues.every((v) => num(v) === num(numericValues[0]));
-  if (allEqual) return null;
+  if (validIndices.length < 2) return new Set();
 
-  return bestIdx;
+  const best = new Set<number>();
+  for (const i of validIndices) {
+    if (num(values[i]) === bestVal) best.add(i);
+  }
+
+  // Don't highlight if all valid values are equal
+  if (best.size === validIndices.length) return new Set();
+
+  return best;
 }
 
 export function ComparisonTable({
@@ -102,7 +104,7 @@ export function ComparisonTable({
             const values = entities.map(
               (e) => entityStats[e.id]?.[key]
             );
-            const bestIdx = getBestIndex(values, key);
+            const bestSet = getBestIndices(values, key);
 
             return (
               <tr
@@ -125,7 +127,7 @@ export function ComparisonTable({
                 {entities.map((entity, eIdx) => {
                   const raw = entityStats[entity.id]?.[key];
                   const formatted = formatStatValue(key, raw, mode);
-                  const isBest = bestIdx === eIdx;
+                  const isBest = bestSet.has(eIdx);
 
                   return (
                     <td
