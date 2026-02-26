@@ -7,7 +7,7 @@ import {
   SEASON_TYPES,
 } from "./search-params";
 
-export const filterSchema = z.object({
+const baseFilterSchema = z.object({
   startYear: z.number().int().min(MIN_SEASON).max(CURRENT_SEASON),
   startWeek: z.number().int().min(MIN_WEEK).max(MAX_WEEK),
   endYear: z.number().int().min(MIN_SEASON).max(CURRENT_SEASON),
@@ -15,7 +15,12 @@ export const filterSchema = z.object({
   seasonType: z.enum(SEASON_TYPES),
 });
 
-export type ValidatedFilters = z.infer<typeof filterSchema>;
+export const filterSchema = baseFilterSchema.refine(
+  (d) => d.startYear < d.endYear || (d.startYear === d.endYear && d.startWeek <= d.endWeek),
+  { message: "Start date must be before or equal to end date" }
+);
+
+export type ValidatedFilters = z.infer<typeof baseFilterSchema>;
 
 export function toDbParams(filters: ValidatedFilters) {
   return {

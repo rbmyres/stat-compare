@@ -1,8 +1,7 @@
-import { query } from "@/lib/db";
 import { searchParamsCache } from "@/lib/filters/search-params";
 import { filterSchema, toDbParams } from "@/lib/filters/validation";
 import { StatsPageClient } from "@/components/players/StatsPageClient";
-import type { PlayerStats } from "@/lib/types/player-stats";
+import { getAllPlayerStats } from "@/lib/cached-queries";
 
 export default async function PassingPage({
   searchParams,
@@ -13,9 +12,8 @@ export default async function PassingPage({
   const validated = filterSchema.parse(filters);
   const db = toDbParams(validated);
 
-  const allPlayers = await query<PlayerStats>(
-    "SELECT * FROM player_stats($1, $2, $3, $4, $5, $6)",
-    [null, db.seasonStart, db.seasonEnd, db.weekStart, db.weekEnd, db.seasonType]
+  const allPlayers = await getAllPlayerStats(
+    db.seasonStart, db.seasonEnd, db.weekStart, db.weekEnd, db.seasonType
   );
 
   const players = allPlayers.filter((p) => Number(p.pass_attempts) > 0);

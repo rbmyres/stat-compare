@@ -11,6 +11,7 @@ interface StatPickerProps {
   selected: string[];
   onToggle: (key: string) => void;
   onBulkAdd: (keys: string[]) => void;
+  onBulkRemove?: (keys: string[]) => void;
   onClear: () => void;
 }
 
@@ -19,6 +20,7 @@ export function StatPicker({
   selected,
   onToggle,
   onBulkAdd,
+  onBulkRemove,
   onClear,
 }: StatPickerProps) {
   const categories = getCompareCategories(mode);
@@ -56,8 +58,10 @@ export function StatPicker({
                 : "";
             return (
               <button
+                type="button"
                 key={key}
                 onClick={() => onToggle(key)}
+                aria-label={`Remove ${(def?.abbr ?? key) + suffix}`}
                 className="inline-flex items-center gap-1 rounded-full bg-nfl-navy/8 px-2.5 py-1 text-xs font-medium text-nfl-navy hover:bg-nfl-navy/15 transition-colors"
               >
                 {(def?.abbr ?? key) + suffix}
@@ -68,6 +72,7 @@ export function StatPicker({
             );
           })}
           <button
+            type="button"
             onClick={onClear}
             className="text-xs text-foreground/40 hover:text-foreground/70 transition-colors ml-1"
           >
@@ -83,7 +88,8 @@ export function StatPicker({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search stats..."
-          className="w-full rounded-lg border border-foreground/15 bg-white py-2 pl-9 pr-3 text-sm placeholder:text-foreground/35 focus:border-nfl-navy/30 focus:outline-none focus:ring-1 focus:ring-nfl-navy/20"
+          aria-label="Search stats"
+          className="w-full rounded-lg border border-foreground/15 bg-background py-2 pl-9 pr-3 text-sm placeholder:text-foreground/35 focus:border-nfl-navy/30 focus:outline-none focus:ring-1 focus:ring-nfl-navy/20"
         />
         <svg
           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/30"
@@ -150,9 +156,11 @@ export function StatPicker({
             return (
               <div key={category.title}>
                 <button
+                  type="button"
                   onClick={() =>
                     setExpandedCategory(isExpanded ? null : category.title)
                   }
+                  aria-expanded={isExpanded}
                   className="flex w-full items-center justify-between px-3 py-2.5 text-left hover:bg-foreground/[0.02] transition-colors"
                 >
                   <div className="flex items-center gap-2">
@@ -185,6 +193,7 @@ export function StatPicker({
                   <div className="border-t border-foreground/[0.04] bg-foreground/[0.01] px-3 py-2">
                     <div className="mb-2 flex gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           const toAdd = category.stats.filter(
                             (s) => !selected.includes(s)
@@ -197,10 +206,16 @@ export function StatPicker({
                       </button>
                       <span className="text-foreground/20">|</span>
                       <button
+                        type="button"
                         onClick={() => {
-                          category.stats
-                            .filter((s) => selected.includes(s))
-                            .forEach((s) => onToggle(s));
+                          const toRemove = category.stats.filter((s) => selected.includes(s));
+                          if (toRemove.length > 0) {
+                            if (onBulkRemove) {
+                              onBulkRemove(toRemove);
+                            } else {
+                              toRemove.forEach((s) => onToggle(s));
+                            }
+                          }
                         }}
                         className="text-[11px] text-foreground/40 hover:text-foreground/70 transition-colors"
                       >

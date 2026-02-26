@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import type { SearchResult } from "@/lib/types";
 import type { CompareMode } from "@/lib/filters/compare-params";
 import { cn } from "@/lib/utils/cn";
@@ -47,7 +48,11 @@ export function EntitySelector({
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
+    };
   }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -74,6 +79,7 @@ export function EntitySelector({
           `/api/search?q=${encodeURIComponent(value)}&type=${mode}`,
           { signal: controller.signal }
         );
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`);
         const data = await res.json();
         const filtered = (data.results || []).filter(
           (r: SearchResult) =>
@@ -140,9 +146,11 @@ export function EntitySelector({
               className="flex items-center gap-2 rounded-lg border border-foreground/10 bg-foreground/[0.02] px-3 py-2"
             >
               {entity.image_url ? (
-                <img
+                <Image
                   src={entity.image_url}
-                  alt=""
+                  alt={entity.name}
+                  width={32}
+                  height={32}
                   className={cn(
                     "h-8 w-8 object-contain",
                     mode === "player" && "rounded-full bg-foreground/5"
@@ -238,9 +246,11 @@ export function EntitySelector({
                     )}
                   >
                     {result.image_url ? (
-                      <img
+                      <Image
                         src={result.image_url}
-                        alt=""
+                        alt={result.name}
+                        width={32}
+                        height={32}
                         className={cn(
                           "h-8 w-8 object-contain",
                           result.type === "player" &&

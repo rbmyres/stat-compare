@@ -93,6 +93,14 @@ export function StatTooltip({
       onMouseLeave={hide}
       onFocus={show}
       onBlur={hide}
+      onTouchStart={(e) => {
+        if (visible) {
+          hide();
+        } else {
+          e.preventDefault();
+          show();
+        }
+      }}
       tabIndex={0}
       className="inline-flex items-center"
     >

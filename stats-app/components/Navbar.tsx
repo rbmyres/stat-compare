@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SearchBar } from "@/components/SearchBar";
@@ -127,7 +127,7 @@ function NavDropdown({
         )}
       >
         <div
-          className="min-w-[140px] rounded-md border border-white/10 bg-[#013369] py-1 shadow-lg"
+          className="min-w-[140px] rounded-md border border-white/10 bg-nfl-navy py-1 shadow-lg"
           role="menu"
         >
           {item.children!.map((child, i) => (
@@ -204,10 +204,22 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  const closeMobile = useCallback(() => {
+    setMobileOpen(false);
+    hamburgerRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
+      // Focus first focusable element in menu
+      const first = mobileMenuRef.current?.querySelector<HTMLElement>(
+        "input, a, button"
+      );
+      first?.focus();
     } else {
       document.body.style.overflow = "";
     }
@@ -216,8 +228,20 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
+  // Close on Escape
+  useEffect(() => {
+    if (!mobileOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        closeMobile();
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen, closeMobile]);
+
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#013369]">
+    <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-nfl-navy">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-14 items-center gap-6">
           {/* Brand */}
@@ -258,11 +282,13 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
+            ref={hamburgerRef}
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
             className="relative ml-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-white/10 lg:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             <span className="sr-only">
               {mobileOpen ? "Close menu" : "Open menu"}
@@ -291,6 +317,10 @@ export function Navbar() {
 
       {/* Mobile menu */}
       <div
+        id="mobile-menu"
+        ref={mobileMenuRef}
+        role="dialog"
+        aria-label="Navigation menu"
         className={cn(
           "overflow-hidden border-t border-white/[0.06] transition-all duration-200 ease-out lg:hidden",
           mobileOpen ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"
@@ -298,7 +328,7 @@ export function Navbar() {
       >
         <div className="mx-auto max-w-7xl space-y-1 px-4 pb-4 pt-3">
           <div className="pb-3">
-            <SearchBar onNavigate={() => setMobileOpen(false)} />
+            <SearchBar onNavigate={closeMobile} />
           </div>
           <div className="border-t border-white/[0.06] pt-2">
             {NAV_LINKS.map((link) =>
@@ -355,7 +385,7 @@ export function Navbar() {
                           key={child.href}
                           href={child.href}
                           isActive={pathname === child.href}
-                          onClick={() => setMobileOpen(false)}
+                          onClick={closeMobile}
                         >
                           {child.label}
                         </MobileNavLink>

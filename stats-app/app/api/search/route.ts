@@ -5,19 +5,49 @@ import type { SearchResult } from "@/lib/types";
 
 const searchSchema = z.object({
   q: z.string().min(2).max(100),
+  type: z.enum(["player", "team"]).optional(),
 });
+
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 30; // requests per window
+const RATE_WINDOW = 60_000; // 1 minute
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_WINDOW });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT;
+}
+
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, "\\$&");
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     const q = request.nextUrl.searchParams.get("q") || "";
-    const type = request.nextUrl.searchParams.get("type"); // optional: "player" | "team"
-    const validation = searchSchema.safeParse({ q });
+    const rawType = request.nextUrl.searchParams.get("type") || undefined;
+    const validation = searchSchema.safeParse({ q, type: rawType });
 
     if (!validation.success) {
       return NextResponse.json({ results: [] });
     }
 
-    const term = `%${validation.data.q}%`;
+    const type = validation.data.type;
+    const term = `%${escapeLike(validation.data.q)}%`;
 
     const [players, teams] = await Promise.all([
       type === "team"

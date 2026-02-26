@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import type { SearchResult } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
 
@@ -12,6 +13,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchError, setSearchError] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -24,13 +26,18 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
+    };
   }, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     setQuery(value);
     setActiveIndex(-1);
+    setSearchError(false);
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     abortRef.current?.abort();
@@ -51,12 +58,15 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
           `/api/search?q=${encodeURIComponent(value)}`,
           { signal: controller.signal }
         );
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`);
         const data = await res.json();
         setResults(data.results || []);
         setIsOpen(true);
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") return;
         setResults([]);
+        setSearchError(true);
+        setIsOpen(true);
       } finally {
         if (!controller.signal.aborted) {
           setIsLoading(false);
@@ -102,9 +112,16 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
     }
   }
 
-  const teamResults = results.filter((r) => r.type === "team");
-  const playerResults = results.filter((r) => r.type === "player");
-  let flatIndex = -1;
+  // Pre-compute flat list with indices to avoid mutating during render
+  const flatResults = useMemo(() => {
+    const teams = results.filter((r) => r.type === "team");
+    const players = results.filter((r) => r.type === "player");
+    let idx = 0;
+    return {
+      teams: teams.map((r) => ({ ...r, flatIdx: idx++ })),
+      players: players.map((r) => ({ ...r, flatIdx: idx++ })),
+    };
+  }, [results]);
 
   return (
     <div ref={wrapperRef} className="relative w-full">
@@ -118,6 +135,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
           onFocus={() => {
             if (results.length > 0) setIsOpen(true);
           }}
+          maxLength={100}
           placeholder="Search players & teams..."
           role="combobox"
           aria-expanded={isOpen}
@@ -137,6 +155,7 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -158,118 +177,117 @@ export function SearchBar({ onNavigate }: { onNavigate?: () => void }) {
           role="listbox"
           className="absolute top-full left-0 right-0 z-50 mt-2 max-h-80 overflow-y-auto rounded-lg border border-foreground/10 bg-white shadow-lg"
         >
-          {results.length === 0 && !isLoading ? (
+          {searchError ? (
+            <div className="px-4 py-3 text-sm text-red-500/70">
+              Unable to search. Please try again.
+            </div>
+          ) : results.length === 0 && !isLoading ? (
             <div className="px-4 py-3 text-sm text-foreground/50">
               No results for &ldquo;{query}&rdquo;
             </div>
           ) : (
             <>
-              {teamResults.length > 0 && (
+              {flatResults.teams.length > 0 && (
                 <div>
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-foreground/40">
                     Teams
                   </div>
-                  {teamResults.map((result) => {
-                    flatIndex++;
-                    const idx = flatIndex;
-                    return (
-                      <button
-                        key={`team-${result.id}`}
-                        id={`search-result-${idx}`}
-                        role="option"
-                        aria-selected={activeIndex === idx}
-                        onClick={() => navigateToResult(result)}
-                        onMouseEnter={() => setActiveIndex(idx)}
-                        className={cn(
-                          "flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm transition-colors",
-                          activeIndex === idx
-                            ? "bg-nfl-navy/5"
-                            : "hover:bg-foreground/5"
-                        )}
-                      >
-                        {result.image_url ? (
-                          <img
-                            src={result.image_url}
-                            alt=""
-                            className="h-8 w-8 object-contain"
-                            onError={(e) => { e.currentTarget.style.display = "none"; }}
-                          />
-                        ) : (
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nfl-navy/10 text-xs font-bold text-nfl-navy">
-                            {result.id}
-                          </span>
-                        )}
-                        <div>
-                          <div className="font-medium text-foreground">
-                            {result.name}
-                          </div>
-                          <div className="text-xs text-foreground/50">
-                            {result.subtitle}
-                          </div>
+                  {flatResults.teams.map((result) => (
+                    <button
+                      key={`team-${result.id}`}
+                      id={`search-result-${result.flatIdx}`}
+                      role="option"
+                      aria-selected={activeIndex === result.flatIdx}
+                      onClick={() => navigateToResult(result)}
+                      onMouseEnter={() => setActiveIndex(result.flatIdx)}
+                      className={cn(
+                        "flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm transition-colors",
+                        activeIndex === result.flatIdx
+                          ? "bg-nfl-navy/5"
+                          : "hover:bg-foreground/5"
+                      )}
+                    >
+                      {result.image_url ? (
+                        <Image
+                          src={result.image_url}
+                          alt={result.name}
+                          width={32}
+                          height={32}
+                          className="h-8 w-8 object-contain"
+                        />
+                      ) : (
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-nfl-navy/10 text-xs font-bold text-nfl-navy">
+                          {result.id}
+                        </span>
+                      )}
+                      <div>
+                        <div className="font-medium text-foreground">
+                          {result.name}
                         </div>
-                      </button>
-                    );
-                  })}
+                        <div className="text-xs text-foreground/50">
+                          {result.subtitle}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               )}
-              {playerResults.length > 0 && (
+              {flatResults.players.length > 0 && (
                 <div>
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-foreground/40">
                     Players
                   </div>
-                  {playerResults.map((result) => {
-                    flatIndex++;
-                    const idx = flatIndex;
-                    return (
-                      <button
-                        key={`player-${result.id}`}
-                        id={`search-result-${idx}`}
-                        role="option"
-                        aria-selected={activeIndex === idx}
-                        onClick={() => navigateToResult(result)}
-                        onMouseEnter={() => setActiveIndex(idx)}
-                        className={cn(
-                          "flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm transition-colors",
-                          activeIndex === idx
-                            ? "bg-nfl-navy/5"
-                            : "hover:bg-foreground/5"
-                        )}
-                      >
-                        {result.image_url ? (
-                          <img
-                            src={result.image_url}
-                            alt=""
-                            className="h-8 w-8 rounded-full object-cover bg-foreground/5"
-                            onError={(e) => { e.currentTarget.style.display = "none"; }}
-                          />
-                        ) : (
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-medium text-foreground/60">
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                              />
-                            </svg>
-                          </span>
-                        )}
-                        <div>
-                          <div className="font-medium text-foreground">
-                            {result.name}
-                          </div>
-                          <div className="text-xs text-foreground/50">
-                            {result.subtitle}
-                          </div>
+                  {flatResults.players.map((result) => (
+                    <button
+                      key={`player-${result.id}`}
+                      id={`search-result-${result.flatIdx}`}
+                      role="option"
+                      aria-selected={activeIndex === result.flatIdx}
+                      onClick={() => navigateToResult(result)}
+                      onMouseEnter={() => setActiveIndex(result.flatIdx)}
+                      className={cn(
+                        "flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm transition-colors",
+                        activeIndex === result.flatIdx
+                          ? "bg-nfl-navy/5"
+                          : "hover:bg-foreground/5"
+                      )}
+                    >
+                      {result.image_url ? (
+                        <Image
+                          src={result.image_url}
+                          alt={result.name}
+                          width={32}
+                          height={32}
+                          className="h-8 w-8 rounded-full object-cover bg-foreground/5"
+                        />
+                      ) : (
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-medium text-foreground/60">
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                        </span>
+                      )}
+                      <div>
+                        <div className="font-medium text-foreground">
+                          {result.name}
                         </div>
-                      </button>
-                    );
-                  })}
+                        <div className="text-xs text-foreground/50">
+                          {result.subtitle}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               )}
             </>

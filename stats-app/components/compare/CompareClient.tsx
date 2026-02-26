@@ -54,7 +54,13 @@ export function CompareClient({
   }
 
   function handleBulkAdd(keys: string[]) {
-    updateParams({ stats: [...params.stats, ...keys] });
+    const unique = [...new Set([...params.stats, ...keys])];
+    updateParams({ stats: unique });
+  }
+
+  function handleBulkRemove(keys: string[]) {
+    const removeSet = new Set(keys);
+    updateParams({ stats: params.stats.filter((s) => !removeSet.has(s)) });
   }
 
   function handleClearStats() {
@@ -108,6 +114,7 @@ export function CompareClient({
             selected={selectedStats}
             onToggle={handleToggleStat}
             onBulkAdd={handleBulkAdd}
+            onBulkRemove={handleBulkRemove}
             onClear={handleClearStats}
           />
         </section>

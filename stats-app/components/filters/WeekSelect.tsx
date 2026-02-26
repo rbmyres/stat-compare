@@ -9,6 +9,7 @@ interface WeekSelectProps {
   onChange: (week: number) => void;
   min?: number;
   max?: number;
+  id?: string;
 }
 
 export function WeekSelect({
@@ -17,7 +18,9 @@ export function WeekSelect({
   onChange,
   min = MIN_WEEK,
   max = MAX_WEEK,
+  id,
 }: WeekSelectProps) {
+  const selectId = id ?? `week-select-${label.toLowerCase().replace(/\s+/g, "-")}`;
   const weeks: number[] = [];
   for (let w = min; w <= max; w++) {
     weeks.push(w);
@@ -25,11 +28,12 @@ export function WeekSelect({
 
   return (
     <div className="flex items-center gap-1.5">
-      <label className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
+      <label htmlFor={selectId} className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
         {label}
       </label>
       <div className="relative">
         <select
+          id={selectId}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           className={cn(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useQueryStates, parseAsStringLiteral } from "nuqs";
 import type { TeamStats } from "@/lib/types/team-stats";
 import type { TeamColumnDef } from "@/lib/team-columns";
 import {
@@ -60,8 +60,15 @@ export function TeamStatsPageClient({
   title,
   category,
 }: TeamStatsPageClientProps) {
-  const [side, setSide] = useState<"offense" | "defense">("offense");
-  const [view, setView] = useState<"basic" | "advanced">("basic");
+  const [params, setParams] = useQueryStates({
+    side: parseAsStringLiteral(["offense", "defense"] as const).withDefault("offense"),
+    view: parseAsStringLiteral(["basic", "advanced"] as const).withDefault("basic"),
+  }, { shallow: true });
+
+  const side = params.side;
+  const setSide = (v: "offense" | "defense") => setParams({ side: v });
+  const view = params.view;
+  const setView = (v: "basic" | "advanced") => setParams({ view: v });
 
   const columnSet = COLUMN_MAP[category][side];
   const hasAdvanced = !!columnSet.advanced;
@@ -70,7 +77,7 @@ export function TeamStatsPageClient({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
           <p className="mt-1 text-sm text-foreground/50">

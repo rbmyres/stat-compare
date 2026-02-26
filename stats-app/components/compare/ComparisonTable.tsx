@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { CompareMode } from "@/lib/filters/compare-params";
 import type { CompareEntity } from "./EntitySelector";
 import { formatStatValue } from "@/lib/compare-format-map";
@@ -25,7 +26,7 @@ function getBestIndices(
   const validIndices: number[] = [];
 
   for (let i = 0; i < values.length; i++) {
-    if (isNaN(Number(values[i])) || values[i] === null || values[i] === undefined) continue;
+    if (values[i] === null || values[i] === undefined || values[i] === "" || isNaN(Number(values[i]))) continue;
     const n = num(values[i]);
     validIndices.push(i);
     if (lowerBetter ? n < bestVal : n > bestVal) {
@@ -60,19 +61,22 @@ export function ComparisonTable({
         {/* Header: entity images + names */}
         <thead>
           <tr className="border-b border-foreground/[0.06]">
-            <th className="px-4 py-3 text-left font-medium text-foreground/40 w-[180px] min-w-[140px]">
+            <th scope="col" className="px-4 py-3 text-left font-medium text-foreground/40 w-[180px] min-w-[140px]">
               Stat
             </th>
             {entities.map((entity) => (
               <th
+                scope="col"
                 key={entity.id}
                 className="px-4 py-3 text-center min-w-[120px]"
               >
                 <div className="flex flex-col items-center gap-1.5">
                   {entity.image_url ? (
-                    <img
+                    <Image
                       src={entity.image_url}
-                      alt=""
+                      alt={entity.name}
+                      width={48}
+                      height={48}
                       className={cn(
                         "h-12 w-12 object-contain",
                         mode === "player" && "rounded-full bg-foreground/5"
@@ -111,7 +115,7 @@ export function ComparisonTable({
                 key={key}
                 className={cn(
                   "border-b border-foreground/[0.04]",
-                  i % 2 === 0 ? "bg-white" : "bg-foreground/[0.015]"
+                  i % 2 === 0 ? "bg-background" : "bg-foreground/[0.015]"
                 )}
               >
                 <td className="px-4 py-2 text-foreground/70">

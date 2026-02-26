@@ -1,8 +1,7 @@
-import { query } from "@/lib/db";
 import { searchParamsCache } from "@/lib/filters/search-params";
 import { filterSchema, toDbParams } from "@/lib/filters/validation";
 import { TeamStatsPageClient } from "@/components/teams/TeamStatsPageClient";
-import type { TeamStats } from "@/lib/types/team-stats";
+import { getAllTeamStats } from "@/lib/cached-queries";
 
 export default async function TeamRushingPage({
   searchParams,
@@ -13,9 +12,8 @@ export default async function TeamRushingPage({
   const validated = filterSchema.parse(filters);
   const db = toDbParams(validated);
 
-  const teams = await query<TeamStats>(
-    "SELECT * FROM team_stats($1, $2, $3, $4, $5, $6)",
-    [null, db.seasonStart, db.seasonEnd, db.weekStart, db.weekEnd, db.seasonType]
+  const teams = await getAllTeamStats(
+    db.seasonStart, db.seasonEnd, db.weekStart, db.weekEnd, db.seasonType
   );
 
   return (

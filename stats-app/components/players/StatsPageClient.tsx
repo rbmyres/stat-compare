@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+import { useQueryStates, parseAsInteger, parseAsStringLiteral, parseAsArrayOf } from "nuqs";
 import type { PlayerStats } from "@/lib/types/player-stats";
 import {
   PASSING_COLUMNS,
@@ -51,9 +52,18 @@ export function StatsPageClient({
   title,
   category,
 }: StatsPageClientProps) {
-  const [view, setView] = useState<"basic" | "advanced">("basic");
-  const [positions, setPositions] = useState<Set<Position>>(() => new Set(POSITIONS));
-  const [minimum, setMinimum] = useState(0);
+  const [params, setParams] = useQueryStates({
+    view: parseAsStringLiteral(["basic", "advanced"] as const).withDefault("basic"),
+    pos: parseAsArrayOf(parseAsStringLiteral(POSITIONS)).withDefault([...POSITIONS]),
+    min: parseAsInteger.withDefault(0),
+  }, { shallow: true });
+
+  const view = params.view;
+  const setView = (v: "basic" | "advanced") => setParams({ view: v });
+  const positions = new Set(params.pos as Position[]);
+  const setPositions = (s: Set<Position>) => setParams({ pos: [...s] });
+  const minimum = params.min;
+  const setMinimum = (v: number) => setParams({ min: v });
 
   const config = COLUMN_MAP[category];
   const hasAdvanced = "advanced" in config;

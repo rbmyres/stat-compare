@@ -9,6 +9,7 @@ interface YearSelectProps {
   onChange: (year: number) => void;
   min?: number;
   max?: number;
+  id?: string;
 }
 
 export function YearSelect({
@@ -17,7 +18,9 @@ export function YearSelect({
   onChange,
   min = MIN_SEASON,
   max = CURRENT_SEASON,
+  id,
 }: YearSelectProps) {
+  const selectId = id ?? (label ? `year-select-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
   const years: number[] = [];
   for (let y = max; y >= min; y--) {
     years.push(y);
@@ -26,12 +29,13 @@ export function YearSelect({
   return (
     <div className="flex items-center gap-1.5">
       {label && (
-        <label className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
+        <label htmlFor={selectId} className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
           {label}
         </label>
       )}
       <div className="relative">
         <select
+          id={selectId}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           className={cn(

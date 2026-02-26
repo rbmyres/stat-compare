@@ -7,6 +7,7 @@ import type { ColumnDef } from "@/lib/columns";
 import { cn } from "@/lib/utils/cn";
 import { parseRecord } from "@/lib/utils/format";
 import { StatTooltip } from "@/components/StatTooltip";
+import { ScrollHint } from "@/components/ScrollHint";
 import { getStatDescription } from "@/lib/stat-definitions";
 
 const PAGE_SIZE = 50;
@@ -68,14 +69,20 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
       const bRaw = b[sortKey];
       const aStr = String(aRaw ?? "");
       const bStr = String(bRaw ?? "");
+
+      // Treat null/undefined/empty as missing
+      const aIsEmpty = aRaw == null || aRaw === "";
+      const bIsEmpty = bRaw == null || bRaw === "";
+      if (aIsEmpty && bIsEmpty) return 0;
+      if (aIsEmpty) return 1;  // push missing to end
+      if (bIsEmpty) return -1;
+
       const aNum = Number(aRaw);
       const bNum = Number(bRaw);
 
       // Numeric sort (handles pg decimal strings like "0.123")
-      if (!isNaN(aNum) || !isNaN(bNum)) {
-        return sortDir === "asc"
-          ? (aNum || 0) - (bNum || 0)
-          : (bNum || 0) - (aNum || 0);
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return sortDir === "asc" ? aNum - bNum : bNum - aNum;
       }
 
       // Record sort (e.g., "12-5", "9-8")
@@ -100,17 +107,18 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
   const pageRows = sorted.slice(startIndex, endIndex);
 
   return (
-    <div className="overflow-x-auto rounded-md border border-foreground/[0.06]">
+    <div className="rounded-md border border-foreground/[0.06]">
+      <ScrollHint>
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-foreground/[0.025]">
             {/* Rank column */}
-            <th className="sticky left-0 z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-[#f8f8f8] px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+            <th className="sticky left-0 z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-background px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
               #
             </th>
 
             {/* Player name column */}
-            <th className="sticky left-[29px] z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-[#f8f8f8] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+            <th className="sticky left-[29px] z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-background px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
               Player
             </th>
 
@@ -119,6 +127,19 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
               <th
                 key={col.key}
                 onClick={() => handleSort(col.key)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSort(col.key);
+                  }
+                }}
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={
+                  sortKey === col.key
+                    ? sortDir === "asc" ? "ascending" : "descending"
+                    : "none"
+                }
                 className={cn(
                   "cursor-pointer select-none whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] transition-colors hover:text-foreground/60",
                   sortKey === col.key
@@ -147,12 +168,12 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
               className="transition-colors even:bg-foreground/[0.015] hover:bg-foreground/[0.04]"
             >
               {/* Rank */}
-              <td className="sticky left-0 z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-white px-2 py-2 text-center font-mono text-[12px] text-foreground/30">
+              <td className="sticky left-0 z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-background px-2 py-2 text-center font-mono text-[12px] text-foreground/30">
                 {startIndex + i + 1}
               </td>
 
               {/* Player name */}
-              <td className="sticky left-[29px] z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-white px-3 py-2">
+              <td className="sticky left-[29px] z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-background px-3 py-2">
                 <Link
                   href={`/players/${player.player_id}`}
                   className="text-[13px] font-semibold text-nfl-navy hover:underline"
@@ -174,6 +195,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
           ))}
         </tbody>
       </table>
+      </ScrollHint>
 
       {/* Pagination controls */}
       {totalPages > 1 && (
@@ -182,11 +204,12 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
             Showing {startIndex + 1}&ndash;{endIndex} of {totalPlayers} players
           </span>
 
-          <div className="flex items-center gap-1">
+          <nav aria-label="Pagination" className="flex items-center gap-1">
             <button
               type="button"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={safePage <= 1}
+              aria-label="Previous page"
               className={cn(
                 "cursor-pointer rounded px-2 py-1 text-[12px] font-medium transition-colors",
                 safePage <= 1
@@ -202,6 +225,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
                 <span
                   key={`ellipsis-${idx}`}
                   className="px-1 text-[12px] text-foreground/30"
+                  aria-hidden="true"
                 >
                   ...
                 </span>
@@ -210,6 +234,8 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
                   key={page}
                   type="button"
                   onClick={() => setCurrentPage(page as number)}
+                  aria-label={`Page ${page}`}
+                  aria-current={safePage === page ? "page" : undefined}
                   className={cn(
                     "min-w-[28px] cursor-pointer rounded px-1.5 py-1 text-[12px] font-medium transition-colors",
                     safePage === page
@@ -226,6 +252,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
               type="button"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage >= totalPages}
+              aria-label="Next page"
               className={cn(
                 "cursor-pointer rounded px-2 py-1 text-[12px] font-medium transition-colors",
                 safePage >= totalPages
@@ -235,7 +262,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
             >
               Next
             </button>
-          </div>
+          </nav>
         </div>
       )}
     </div>

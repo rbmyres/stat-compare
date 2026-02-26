@@ -1,20 +1,28 @@
 import { Pool } from "pg";
 
-const pool = new Pool({
-  host: process.env.DB_HOST || "localhost",
-  port: parseInt(process.env.DB_PORT || "5433"),
-  database: process.env.DB_NAME || "stats_db",
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  ssl:
-    process.env.DB_SSL === "true"
-      ? { rejectUnauthorized: process.env.NODE_ENV === "production" }
-      : false,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-  statement_timeout: 10000,
-});
+const globalForDb = globalThis as unknown as { _pool: Pool | undefined };
+
+const pool =
+  globalForDb._pool ??
+  new Pool({
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT || "5433"),
+    database: process.env.DB_NAME || "stats_db",
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    ssl:
+      process.env.DB_SSL === "true"
+        ? { rejectUnauthorized: process.env.NODE_ENV === "production" }
+        : false,
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+    statement_timeout: 10000,
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForDb._pool = pool;
+}
 
 pool.on("error", (err) => {
   console.error("Unexpected error on idle client", err);

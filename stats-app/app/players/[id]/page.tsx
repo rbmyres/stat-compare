@@ -5,7 +5,8 @@ import { queryOne } from "@/lib/db";
 import { searchParamsCache } from "@/lib/filters/search-params";
 import { filterSchema, toDbParams } from "@/lib/filters/validation";
 import { PlayerStatsDisplay } from "@/components/players/PlayerStatsDisplay";
-import type { Player, PlayerStats } from "@/lib/types";
+import { getPlayer } from "@/lib/cached-queries";
+import type { PlayerStats } from "@/lib/types";
 
 export async function generateMetadata({
   params,
@@ -13,10 +14,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const player = await queryOne<Player>(
-    "SELECT first_name, last_name FROM players WHERE player_id = $1",
-    [id]
-  );
+  const player = await getPlayer(id);
   if (!player) return { title: "Player Not Found | StatCompare" };
   const name = `${player.first_name} ${player.last_name}`;
   return {
@@ -35,10 +33,7 @@ export default async function PlayerDetailPage({
   const { id } = await params;
   const filters = await searchParamsCache.parse(searchParams);
 
-  const player = await queryOne<Player>(
-    "SELECT player_id, first_name, last_name, first_season, last_season, headshot_url FROM players WHERE player_id = $1",
-    [id]
-  );
+  const player = await getPlayer(id);
 
   if (!player) {
     notFound();

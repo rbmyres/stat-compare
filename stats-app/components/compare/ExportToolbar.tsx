@@ -37,7 +37,6 @@ export function ExportToolbar({
       link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error("Image export failed:", err);
       setExportError("Image export failed. Try using Print instead.");
     }
   }, [tableRef]);
