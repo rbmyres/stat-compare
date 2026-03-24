@@ -3,7 +3,7 @@ import { filterSchema, toDbParams } from "@/lib/filters/validation";
 import { queryOne } from "@/lib/db";
 import { CompareClient } from "@/components/compare/CompareClient";
 import type { CompareEntity } from "@/components/compare/EntitySelector";
-import type { Player, Team, PlayerStats, TeamStats } from "@/lib/types";
+import type { Player, Team } from "@/lib/types";
 
 function parseIds(raw: string | string[] | undefined): string[] {
   if (!raw) return [];
@@ -38,7 +38,7 @@ export default async function ComparePage({
               "SELECT player_id, first_name, last_name, first_season, last_season, headshot_url FROM players WHERE player_id = $1",
               [id]
             ),
-            queryOne<PlayerStats>(
+            queryOne<Record<string, unknown>>(
               "SELECT * FROM player_stats($1, $2, $3, $4, $5, $6)",
               [
                 id,
@@ -65,10 +65,7 @@ export default async function ComparePage({
               : `${player.first_season}\u2013${player.last_season}`,
           image_url: player.headshot_url ?? undefined,
         });
-        entityStats[player.player_id] = stats as unknown as Record<
-          string,
-          unknown
-        >;
+        entityStats[player.player_id] = stats;
       }
     } else {
       const results = await Promise.all(
@@ -78,7 +75,7 @@ export default async function ComparePage({
               "SELECT team_id, abbr, display_name, nickname, primary_color, logo_url FROM teams WHERE team_id = $1",
               [id]
             ),
-            queryOne<TeamStats>(
+            queryOne<Record<string, unknown>>(
               "SELECT * FROM team_stats($1, $2, $3, $4, $5, $6)",
               [
                 id,
@@ -102,10 +99,7 @@ export default async function ComparePage({
           subtitle: team.nickname,
           image_url: team.logo_url ?? undefined,
         });
-        entityStats[team.team_id] = stats as unknown as Record<
-          string,
-          unknown
-        >;
+        entityStats[team.team_id] = stats;
       }
     }
   }

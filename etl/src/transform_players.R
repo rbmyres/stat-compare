@@ -1,29 +1,20 @@
-# Player Statistics Transformation Functions
-# Processes NFL play-by-play data to calculate player statistics (passing, rushing, receiving)
-# All calculations match nflverse reference implementations for accuracy
+# Player Statistics Transformation
 
 library(dplyr)
 library(logger)
 library(tidyr)
 library(purrr)
 
-# Transform play-by-play data into weekly player statistics
-# Calculates comprehensive player metrics across all position groups
-# @param pbp_data: Raw play-by-play data from nflreadr
-# @param season: Integer year being processed
-# @return: DataFrame with weekly player statistics
 transform_player_stats <- function(pbp_data, season) {
   cat(paste("Transforming player stats for season", season, "...\n"))
-  
-  # Filter for regular season plays only (excludes preseason/playoffs)
+
   pbp_reg <- pbp_data %>%
     filter(
       (two_point_attempt != 1 | is.na(two_point_attempt)),
       play == 1
     )
-  
-  # Create player-to-team mapping for each week
-  # Handles rare cases where players change teams mid-week
+
+  # Player-to-team mapping per week (handles mid-season trades)
   player_team_map <- pbp_reg %>%
     select(
       player_id = passer_player_id,
@@ -48,18 +39,15 @@ transform_player_stats <- function(pbp_data, season) {
     ) %>%
     filter(!is.na(player_id), !is.na(team_id)) %>%
     distinct() %>%
-    # For players on multiple teams in one week, use first occurrence
     group_by(player_id, week) %>%
     slice_head(n = 1) %>%
     ungroup()
-  
+
   cat("Calculating passing stats...\n")
-  # Calculate passing stats
-  # First get all dropbacks for all QBs
   all_dropbacks <- pbp_reg %>%
     filter(
       (
-        (passer_player_id %in% unique(pbp_reg$passer_player_id[!is.na(pbp_reg$passer_player_id)]) & 
+        (passer_player_id %in% unique(pbp_reg$passer_player_id[!is.na(pbp_reg$passer_player_id)]) &
          (qb_dropback == 1 | qb_spike == 1)) |
         (qb_scramble == 1 & rusher_player_id %in% unique(pbp_reg$rusher_player_id[!is.na(pbp_reg$rusher_player_id)]))
       )
@@ -67,13 +55,11 @@ transform_player_stats <- function(pbp_data, season) {
     distinct(game_id, play_id, .keep_all = TRUE) %>%
     mutate(player_id = coalesce(passer_player_id, rusher_player_id)) %>%
     filter(!is.na(player_id))
-  
-  # Calculate stats using grouped approach but with exact reference logic
+
   passing_stats <- all_dropbacks %>%
     group_by(player_id, week) %>%
     summarise(
       pass_qb_dropbacks = n(),
-      # Use same exact filters as reference for all calculations
       pass_completions = sum(complete_pass == 1 & pass_attempt == 1 & qb_scramble != 1 & sack != 1, na.rm = TRUE),
       pass_yards = sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, passing_yards, 0), na.rm = TRUE),
       pass_touchdowns = sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, pass_touchdown, 0), na.rm = TRUE),
@@ -94,10 +80,9 @@ transform_player_stats <- function(pbp_data, season) {
       pass_cpoe_total = round(sum(ifelse(pass_attempt == 1 & qb_scramble != 1 & sack != 1, cpoe, 0), na.rm = TRUE), 4),
       .groups = "drop"
     )
-  
-  # Calculate pass attempts separately
-  # The key insight: reference queries the original pbp_2024 data, not the filtered dropbacks
-  pass_attempts_data <- pbp_data %>%  # Use original pbp_data, not pbp_reg!
+
+  # Pass attempts from original pbp_data (not filtered dropbacks) to match nflverse reference
+  pass_attempts_data <- pbp_data %>%
     filter(
       (two_point_attempt != 1 | is.na(two_point_attempt)),
       !is.na(passer_player_id),
@@ -106,14 +91,13 @@ transform_player_stats <- function(pbp_data, season) {
     ) %>%
     group_by(player_id = passer_player_id, week) %>%
     summarise(pass_attempts = n(), .groups = "drop")
-  
+
   passing_stats <- passing_stats %>%
     left_join(pass_attempts_data, by = c("player_id", "week")) %>%
     mutate(pass_attempts = replace_na(pass_attempts, 0))
-  
+
   cat("Calculating rushing stats...\n")
-  # Calculate rushing stats
-  rushing_stats <- pbp_data %>%  # Use original pbp_data like reference
+  rushing_stats <- pbp_data %>%
     filter(
       !is.na(rusher_player_id),
       !is.na(rushing_yards),
@@ -121,8 +105,7 @@ transform_player_stats <- function(pbp_data, season) {
     ) %>%
     distinct(game_id, play_id, .keep_all = TRUE) %>%
     mutate(
-      # Exact same calculations as reference
-      is_scramble = (!is.na(qb_scramble) & qb_scramble == 1 & 
+      is_scramble = (!is.na(qb_scramble) & qb_scramble == 1 &
                        (penalty == 0 | is.na(penalty)) & play == 1),
       is_stuff = rushing_yards <= 0,
       is_10_plus = rushing_yards >= 10,
@@ -131,7 +114,6 @@ transform_player_stats <- function(pbp_data, season) {
     ) %>%
     group_by(player_id = rusher_player_id, week) %>%
     summarise(
-      # Total rushing stats - exact match to reference
       rush_attempts = n(),
       rush_yards = sum(rushing_yards, na.rm = TRUE),
       rush_touchdowns = sum(rush_touchdown, na.rm = TRUE),
@@ -144,8 +126,6 @@ transform_player_stats <- function(pbp_data, season) {
       rush_success_total = sum(is_success, na.rm = TRUE),
       rush_fumbles = sum(fumble, na.rm = TRUE),
       rush_fumbles_lost = sum(fumble_lost, na.rm = TRUE),
-      
-      # Scramble-specific stats - exact match to reference
       qb_scramble_attempts = sum(is_scramble, na.rm = TRUE),
       qb_scramble_yards = sum(rushing_yards[is_scramble], na.rm = TRUE),
       qb_scramble_epa_total = round(sum(epa[is_scramble], na.rm = TRUE), 4),
@@ -153,9 +133,8 @@ transform_player_stats <- function(pbp_data, season) {
       qb_scramble_success_total = sum(is_success[is_scramble], na.rm = TRUE),
       .groups = "drop"
     )
-  
+
   cat("Calculating receiving stats...\n")
-  # RECEIVING STATS - Optimized version
   receiving_stats <- pbp_reg %>%
     filter(
       !is.na(receiver_player_id),
@@ -186,16 +165,12 @@ transform_player_stats <- function(pbp_data, season) {
       rec_fumbles_lost = sum(fumble_lost, na.rm = TRUE),
       .groups = "drop"
     )
-  
-  cat("Calculating total stats...\n")
-  # Calculate total stats using vectorized operations (no per-player loop)
 
-  # Filter base data once
+  cat("Calculating total stats...\n")
   pbp_filtered <- pbp_data %>%
     filter(two_point_attempt != 1 | is.na(two_point_attempt)) %>%
     distinct(game_id, play_id, .keep_all = TRUE)
 
-  # Create passing plays (passer perspective)
   pass_plays <- pbp_filtered %>%
     filter(!is.na(passer_player_id), pass_attempt == 1, sack == 0) %>%
     transmute(
@@ -213,7 +188,6 @@ transform_player_stats <- function(pbp_data, season) {
       fumble_lost = fumble_lost
     )
 
-  # Create rushing plays (rusher perspective)
   rush_plays <- pbp_filtered %>%
     filter(!is.na(rusher_player_id)) %>%
     transmute(
@@ -231,7 +205,6 @@ transform_player_stats <- function(pbp_data, season) {
       fumble_lost = fumble_lost
     )
 
-  # Create receiving plays (receiver perspective, completions only)
   rec_plays <- pbp_filtered %>%
     filter(!is.na(receiver_player_id), complete_pass == 1) %>%
     transmute(
@@ -249,12 +222,10 @@ transform_player_stats <- function(pbp_data, season) {
       fumble_lost = fumble_lost
     )
 
-  # Combine all player-play records and aggregate
   total_stats <- bind_rows(pass_plays, rush_plays, rec_plays) %>%
     filter(!is.na(player_id)) %>%
     group_by(player_id, week) %>%
     summarise(
-      # Total stats (passing + rushing + receiving)
       total_yards = sum(yards, na.rm = TRUE),
       total_plays = n(),
       total_touchdowns = sum(td, na.rm = TRUE),
@@ -263,8 +234,6 @@ transform_player_stats <- function(pbp_data, season) {
       total_success_plays = sum(is_success, na.rm = TRUE),
       total_fumbles = sum(fumble, na.rm = TRUE),
       total_fumbles_lost = sum(fumble_lost, na.rm = TRUE),
-
-      # Scrimmage stats (rushing + receiving only)
       scrim_yards = sum(yards[is_scrimmage], na.rm = TRUE),
       scrim_touches = sum(is_scrimmage, na.rm = TRUE),
       scrim_touchdowns = sum(td[is_scrimmage], na.rm = TRUE),
@@ -273,51 +242,42 @@ transform_player_stats <- function(pbp_data, season) {
       scrim_success_total = sum(is_success[is_scrimmage], na.rm = TRUE),
       .groups = "drop"
     )
-  
+
   cat("Combining all player stats...\n")
-  # Get all unique player-week combinations
   all_player_weeks <- bind_rows(
     select(passing_stats, player_id, week),
-    select(rushing_stats, player_id, week),  
+    select(rushing_stats, player_id, week),
     select(receiving_stats, player_id, week),
     select(total_stats, player_id, week)
   ) %>%
     distinct() %>%
     filter(!is.na(player_id))
-  
-  # Join all stats together
+
   final_stats <- all_player_weeks %>%
     left_join(passing_stats, by = c("player_id", "week")) %>%
     left_join(rushing_stats, by = c("player_id", "week")) %>%
     left_join(receiving_stats, by = c("player_id", "week")) %>%
     left_join(total_stats, by = c("player_id", "week")) %>%
-    # Add team information from play-by-play data
     left_join(player_team_map, by = c("player_id", "week")) %>%
-    # Fill missing values with 0 and ensure integer types
     mutate(across(where(is.numeric), ~replace_na(.x, 0))) %>%
-    # Convert to integer types to match database schema
-    mutate(across(c(contains("attempts"), contains("completions"), contains("yards"), 
+    mutate(across(c(contains("attempts"), contains("completions"), contains("yards"),
                     contains("touchdowns"), contains("ints"), contains("sacks"),
                     contains("hits"), contains("first_downs"), contains("success"),
                     contains("plus"), contains("long"), contains("targets"),
                     contains("receptions"), contains("stuffs"), contains("fumbles"),
                     contains("plays"), contains("touches")), as.integer)) %>%
-    # Add required columns
     mutate(
       season = season,
       position = NA_character_,
-      # Binary game outcome columns (will be populated by enhance function)
       win = FALSE,
       loss = FALSE,
       tie = FALSE
     ) %>%
-    # Reorder columns to match schema
     select(
       player_id, season, week, team_id, position, win, loss, tie,
-      # All the stat columns
       everything()
     )
-  
-  cat(paste("✓ Transformed", nrow(final_stats), "player-week records\n"))
+
+  cat(paste("Transformed", nrow(final_stats), "player-week records\n"))
   return(final_stats)
 }

@@ -5,7 +5,17 @@ import {
 } from "nuqs/server";
 
 export const MIN_SEASON = 1999;
-export const CURRENT_SEASON = 2025;
+
+// NFL season spans two calendar years (e.g. 2025 season: Sep 2025 – Feb 2026).
+// Before March we're still in the previous year's season.
+function getCurrentNFLSeason(): number {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-indexed: 0=Jan, 2=Mar
+  return month < 3 ? year - 1 : year;
+}
+
+export const CURRENT_SEASON = getCurrentNFLSeason();
 export const MIN_WEEK = 1;
 export const MAX_WEEK = 22;
 

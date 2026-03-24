@@ -12,8 +12,22 @@ const searchSchema = z.object({
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT = 30; // requests per window
 const RATE_WINDOW = 60_000; // 1 minute
+const CLEANUP_INTERVAL = 100; // sweep expired entries every N calls
+let callCount = 0;
+
+function cleanupExpired() {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetTime) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
 
 function isRateLimited(ip: string): boolean {
+  if (++callCount % CLEANUP_INTERVAL === 0) {
+    cleanupExpired();
+  }
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
   if (!entry || now > entry.resetTime) {
@@ -95,7 +109,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ results });
   } catch (error) {
-    console.error("Search error:", error);
+    if (process.env.NODE_ENV === "production") {
+      console.error("Search error:", error instanceof Error ? error.message : "Unknown error");
+    } else {
+      console.error("Search error:", error);
+    }
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -2,6 +2,14 @@ import { Pool } from "pg";
 
 const globalForDb = globalThis as unknown as { _pool: Pool | undefined };
 
+function logError(label: string, err: unknown) {
+  if (process.env.NODE_ENV === "production") {
+    console.error(label, err instanceof Error ? err.message : "Unknown error");
+  } else {
+    console.error(label, err);
+  }
+}
+
 const pool =
   globalForDb._pool ??
   new Pool({
@@ -20,12 +28,10 @@ const pool =
     statement_timeout: 10000,
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForDb._pool = pool;
-}
+globalForDb._pool = pool;
 
 pool.on("error", (err) => {
-  console.error("Unexpected error on idle client", err);
+  logError("Unexpected error on idle client:", err);
 });
 
 export class DatabaseError extends Error {
@@ -43,7 +49,7 @@ export async function query<T>(
     const result = await pool.query(text, params);
     return result.rows as T[];
   } catch (err) {
-    console.error("Database query error:", err);
+    logError("Database query error:", err);
     throw new DatabaseError("Failed to fetch data", err);
   }
 }
@@ -56,7 +62,7 @@ export async function queryOne<T>(
     const result = await pool.query(text, params);
     return (result.rows[0] as T) || null;
   } catch (err) {
-    console.error("Database query error:", err);
+    logError("Database query error:", err);
     throw new DatabaseError("Failed to fetch data", err);
   }
 }
