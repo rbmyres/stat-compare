@@ -143,7 +143,7 @@ export function EntitySelector({
           {entities.map((entity) => (
             <div
               key={entity.id}
-              className="flex items-center gap-2 rounded-lg border border-foreground/10 bg-foreground/[0.02] px-3 py-2"
+              className="flex items-center gap-2 rounded-lg border border-foreground/10 bg-foreground/2 px-3 py-2"
             >
               {entity.image_url ? (
                 <Image
@@ -199,6 +199,7 @@ export function EntitySelector({
               }
               role="combobox"
               aria-expanded={isOpen}
+              aria-controls="entity-selector-listbox"
               className="w-full rounded-lg border border-foreground/15 bg-white py-2 pl-9 pr-3 text-sm placeholder:text-foreground/35 focus:border-nfl-navy/30 focus:outline-none focus:ring-1 focus:ring-nfl-navy/20"
             />
             <svg
@@ -223,6 +224,7 @@ export function EntitySelector({
 
           {isOpen && (
             <div
+              id="entity-selector-listbox"
               role="listbox"
               className="absolute top-full left-0 right-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border border-foreground/10 bg-white shadow-lg"
             >

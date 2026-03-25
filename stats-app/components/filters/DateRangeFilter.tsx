@@ -23,7 +23,7 @@ export function DateRangeFilter() {
     filters.seasonType !== filterParsers.seasonType.defaultValue;
 
   return (
-    <div className="border-b border-foreground/[0.05] bg-foreground/[0.015]">
+    <div className="border-b border-foreground/5 bg-foreground/1.5">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2">
 
         {/* From range */}
@@ -93,7 +93,7 @@ export function DateRangeFilter() {
         />
 
         {/* Divider */}
-        <div className="hidden h-4 w-px bg-foreground/[0.08] sm:block" />
+        <div className="hidden h-4 w-px bg-foreground/8 sm:block" />
 
         {/* Season type */}
         <SeasonTypeToggle
@@ -106,7 +106,7 @@ export function DateRangeFilter() {
           <button
             type="button"
             onClick={() => setFilters(null)}
-            className="ml-auto flex h-7 cursor-pointer items-center gap-1 rounded border border-nfl-red/15 bg-nfl-red/[0.04] px-2 text-[11px] font-semibold text-nfl-red/60 transition-all duration-100 hover:border-nfl-red/25 hover:bg-nfl-red/[0.08] hover:text-nfl-red/80"
+            className="ml-auto flex h-7 cursor-pointer items-center gap-1 rounded border border-nfl-red/15 bg-nfl-red/4 px-2 text-[11px] font-semibold text-nfl-red/60 transition-all duration-100 hover:border-nfl-red/25 hover:bg-nfl-red/8 hover:text-nfl-red/80"
           >
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

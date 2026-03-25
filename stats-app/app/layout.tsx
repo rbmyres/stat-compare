@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <NuqsAdapter>
           <ErrorBoundary>
-            <Suspense fallback={<div className="h-14 border-b border-foreground/[0.06] bg-nfl-navy" />}>
+            <Suspense fallback={<div className="h-14 border-b border-foreground/6 bg-nfl-navy" />}>
               <Navbar />
               <DateRangeFilter />
             </Suspense>

@@ -13,14 +13,14 @@ export function StatSection({ title, stats }: StatSectionProps) {
         {title}
       </h3>
 
-      <div className="overflow-x-auto rounded-md border border-foreground/[0.06]">
+      <div className="overflow-x-auto rounded-md border border-foreground/6">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-foreground/[0.025]">
+            <tr className="bg-foreground/2.5">
               {stats.map((stat) => (
                 <th
                   key={stat.label}
-                  className="whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35"
+                  className="whitespace-nowrap border-b border-foreground/6 px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35"
                 >
                   <StatTooltip
                     content={stat.key ? getStatDescription(stat.key) : undefined}

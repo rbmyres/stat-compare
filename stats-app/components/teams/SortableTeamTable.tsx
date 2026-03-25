@@ -66,15 +66,15 @@ export function SortableTeamTable({ teams, columns }: SortableTeamTableProps) {
   }, [teams, sortKey, sortDir]);
 
   return (
-    <div className="rounded-md border border-foreground/[0.06]">
+    <div className="rounded-md border border-foreground/6">
       <ScrollHint>
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-foreground/[0.025]">
-            <th className="sticky left-0 z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-background px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+          <tr className="bg-foreground/2.5">
+            <th className="sticky left-0 z-20 whitespace-nowrap border-b border-r border-foreground/6 bg-background px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
               #
             </th>
-            <th className="sticky left-[29px] z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-background px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+            <th className="sticky left-7.25 z-20 whitespace-nowrap border-b border-r border-foreground/6 bg-background px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
               Team
             </th>
             {columns.map((col) => (
@@ -95,7 +95,7 @@ export function SortableTeamTable({ teams, columns }: SortableTeamTableProps) {
                     : "none"
                 }
                 className={cn(
-                  "cursor-pointer select-none whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] transition-colors hover:text-foreground/60",
+                  "cursor-pointer select-none whitespace-nowrap border-b border-foreground/6 px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] transition-colors hover:text-foreground/60",
                   sortKey === col.key
                     ? "text-nfl-navy"
                     : "text-foreground/35"
@@ -119,14 +119,15 @@ export function SortableTeamTable({ teams, columns }: SortableTeamTableProps) {
           {sorted.map((team, i) => (
             <tr
               key={team.team_id}
-              className="transition-colors even:bg-foreground/[0.015] hover:bg-foreground/[0.04]"
+              className="transition-colors even:bg-foreground/1.5 hover:bg-foreground/4"
             >
-              <td className="sticky left-0 z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-background px-2 py-2 text-center font-mono text-[12px] text-foreground/30">
+              <td className="sticky left-0 z-10 whitespace-nowrap border-r border-foreground/6 bg-background px-2 py-2 text-center font-mono text-[12px] text-foreground/30">
                 {i + 1}
               </td>
-              <td className="sticky left-[29px] z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-background px-3 py-2">
+              <td className="sticky left-7.25 z-10 whitespace-nowrap border-r border-foreground/6 bg-background px-3 py-2">
                 <Link
                   href={`/teams/${team.team_id}`}
+                  prefetch={false}
                   className="text-[13px] font-semibold text-nfl-navy hover:underline"
                 >
                   {team.team_name}

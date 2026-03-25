@@ -39,9 +39,9 @@ export function YearSelect({
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           className={cn(
-            "h-7 cursor-pointer appearance-none rounded border border-foreground/[0.08] bg-white pl-2 pr-6 font-mono text-xs font-medium tabular-nums text-foreground",
+            "h-7 cursor-pointer appearance-none rounded border border-foreground/8 bg-white pl-2 pr-6 font-mono text-xs font-medium tabular-nums text-foreground",
             "transition-all duration-100",
-            "hover:border-foreground/20 hover:bg-foreground/[0.02]",
+            "hover:border-foreground/20 hover:bg-foreground/2",
             "focus:border-nfl-navy/40 focus:outline-none focus:ring-1 focus:ring-nfl-navy/15"
           )}
         >

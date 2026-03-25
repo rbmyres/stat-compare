@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 interface StatTooltipProps {
@@ -23,9 +23,7 @@ export function StatTooltip({
   const ref = useRef<HTMLSpanElement>(null);
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState<TooltipPos>({ top: 0, left: 0, arrowOffset: 0 });
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   const show = useCallback(() => {
     if (!ref.current) return;
@@ -34,7 +32,7 @@ export function StatTooltip({
     const gap = 6;
 
     // Center horizontally on the trigger
-    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+    const left = rect.left + rect.width / 2 - tooltipWidth / 2;
 
     // Clamp to viewport edges with 8px padding
     const minLeft = 8;

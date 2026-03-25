@@ -23,7 +23,7 @@ export function MinimumFilter({ label, value, onChange }: MinimumFilterProps) {
           const v = parseInt(e.target.value, 10);
           onChange(isNaN(v) || v < 0 ? 0 : v);
         }}
-        className="h-7 w-16 rounded border border-foreground/[0.08] bg-background px-2 text-[12px] font-medium tabular-nums text-foreground/70 outline-none transition-colors focus:border-nfl-navy focus:ring-1 focus:ring-nfl-navy/20"
+        className="h-7 w-16 rounded border border-foreground/8 bg-background px-2 text-[12px] font-medium tabular-nums text-foreground/70 outline-none transition-colors focus:border-nfl-navy focus:ring-1 focus:ring-nfl-navy/20"
       />
     </div>
   );

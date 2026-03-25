@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { PlayerStats } from "@/lib/types/player-stats";
 import type { ColumnDef } from "@/lib/columns";
@@ -46,11 +46,14 @@ interface SortableStatsTableProps {
 export function SortableStatsTable({ players, columns, defaultSortKey }: SortableStatsTableProps) {
   const [sortKey, setSortKey] = useState<keyof PlayerStats | null>(defaultSortKey ?? null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [players]);
+  // Reset page to 1 when players data changes
+  const [currentPage, setCurrentPage] = useState(1);
+  const [prevPlayers, setPrevPlayers] = useState(players);
+  if (prevPlayers !== players) {
+    setPrevPlayers(players);
+    if (currentPage !== 1) setCurrentPage(1);
+  }
 
   function handleSort(key: keyof PlayerStats) {
     if (sortKey === key) {
@@ -107,18 +110,18 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
   const pageRows = sorted.slice(startIndex, endIndex);
 
   return (
-    <div className="rounded-md border border-foreground/[0.06]">
+    <div className="rounded-md border border-foreground/6">
       <ScrollHint>
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-foreground/[0.025]">
+          <tr className="bg-foreground/2.5">
             {/* Rank column */}
-            <th className="sticky left-0 z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-background px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+            <th className="sticky left-0 z-20 whitespace-nowrap border-b border-r border-foreground/6 bg-background px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
               #
             </th>
 
             {/* Player name column */}
-            <th className="sticky left-[29px] z-20 whitespace-nowrap border-b border-r border-foreground/[0.06] bg-background px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+            <th className="sticky left-7.25 z-20 whitespace-nowrap border-b border-r border-foreground/6 bg-background px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
               Player
             </th>
 
@@ -141,7 +144,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
                     : "none"
                 }
                 className={cn(
-                  "cursor-pointer select-none whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] transition-colors hover:text-foreground/60",
+                  "cursor-pointer select-none whitespace-nowrap border-b border-foreground/6 px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] transition-colors hover:text-foreground/60",
                   sortKey === col.key
                     ? "text-nfl-navy"
                     : "text-foreground/35"
@@ -165,17 +168,18 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
           {pageRows.map((player, i) => (
             <tr
               key={player.player_id}
-              className="transition-colors even:bg-foreground/[0.015] hover:bg-foreground/[0.04]"
+              className="transition-colors even:bg-foreground/1.5 hover:bg-foreground/4"
             >
               {/* Rank */}
-              <td className="sticky left-0 z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-background px-2 py-2 text-center font-mono text-[12px] text-foreground/30">
+              <td className="sticky left-0 z-10 whitespace-nowrap border-r border-foreground/6 bg-background px-2 py-2 text-center font-mono text-[12px] text-foreground/30">
                 {startIndex + i + 1}
               </td>
 
               {/* Player name */}
-              <td className="sticky left-[29px] z-10 whitespace-nowrap border-r border-foreground/[0.06] bg-background px-3 py-2">
+              <td className="sticky left-7.25 z-10 whitespace-nowrap border-r border-foreground/6 bg-background px-3 py-2">
                 <Link
                   href={`/players/${player.player_id}`}
+                  prefetch={false}
                   className="text-[13px] font-semibold text-nfl-navy hover:underline"
                 >
                   {player.first_name} {player.last_name}
@@ -199,7 +203,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
 
       {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-foreground/[0.06] px-3 py-2">
+        <div className="flex items-center justify-between border-t border-foreground/6 px-3 py-2">
           <span className="text-[12px] text-foreground/50">
             Showing {startIndex + 1}&ndash;{endIndex} of {totalPlayers} players
           </span>
@@ -214,7 +218,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
                 "cursor-pointer rounded px-2 py-1 text-[12px] font-medium transition-colors",
                 safePage <= 1
                   ? "cursor-not-allowed text-foreground/20"
-                  : "text-foreground/50 hover:bg-foreground/[0.05] hover:text-foreground/70"
+                  : "text-foreground/50 hover:bg-foreground/5 hover:text-foreground/70"
               )}
             >
               Prev
@@ -237,10 +241,10 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
                   aria-label={`Page ${page}`}
                   aria-current={safePage === page ? "page" : undefined}
                   className={cn(
-                    "min-w-[28px] cursor-pointer rounded px-1.5 py-1 text-[12px] font-medium transition-colors",
+                    "min-w-7 cursor-pointer rounded px-1.5 py-1 text-[12px] font-medium transition-colors",
                     safePage === page
                       ? "bg-nfl-navy text-white"
-                      : "text-foreground/50 hover:bg-foreground/[0.05] hover:text-foreground/70"
+                      : "text-foreground/50 hover:bg-foreground/5 hover:text-foreground/70"
                   )}
                 >
                   {page}
@@ -257,7 +261,7 @@ export function SortableStatsTable({ players, columns, defaultSortKey }: Sortabl
                 "cursor-pointer rounded px-2 py-1 text-[12px] font-medium transition-colors",
                 safePage >= totalPages
                   ? "cursor-not-allowed text-foreground/20"
-                  : "text-foreground/50 hover:bg-foreground/[0.05] hover:text-foreground/70"
+                  : "text-foreground/50 hover:bg-foreground/5 hover:text-foreground/70"
               )}
             >
               Next

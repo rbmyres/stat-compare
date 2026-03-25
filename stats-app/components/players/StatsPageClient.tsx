@@ -60,7 +60,7 @@ export function StatsPageClient({
 
   const view = params.view;
   const setView = (v: "basic" | "advanced") => setParams({ view: v });
-  const positions = new Set(params.pos as Position[]);
+  const positions = useMemo(() => new Set(params.pos as Position[]), [params.pos]);
   const setPositions = (s: Set<Position>) => setParams({ pos: [...s] });
   const minimum = params.min;
   const setMinimum = (v: number) => setParams({ min: v });

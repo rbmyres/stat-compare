@@ -74,7 +74,7 @@ export function GlossaryClient() {
           <a
             key={cat.title}
             href={`#${slugify(cat.title)}`}
-            className="rounded-md border border-foreground/[0.06] px-2.5 py-1 text-[12px] font-medium text-foreground/50 transition-colors hover:border-nfl-navy/30 hover:text-nfl-navy"
+            className="rounded-md border border-foreground/6 px-2.5 py-1 text-[12px] font-medium text-foreground/50 transition-colors hover:border-nfl-navy/30 hover:text-nfl-navy"
           >
             {cat.title}
           </a>
@@ -94,17 +94,17 @@ export function GlossaryClient() {
               </p>
             )}
 
-            <div className="mt-3 overflow-x-auto rounded-md border border-foreground/[0.06]">
+            <div className="mt-3 overflow-x-auto rounded-md border border-foreground/6">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-foreground/[0.025]">
-                    <th className="whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+                  <tr className="bg-foreground/2.5">
+                    <th className="whitespace-nowrap border-b border-foreground/6 px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
                       Stat
                     </th>
-                    <th className="whitespace-nowrap border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+                    <th className="whitespace-nowrap border-b border-foreground/6 px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
                       Abbr
                     </th>
-                    <th className="border-b border-foreground/[0.06] px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
+                    <th className="border-b border-foreground/6 px-3 py-1.5 text-left text-[9px] font-semibold uppercase tracking-[0.06em] text-foreground/35">
                       Description
                     </th>
                   </tr>
@@ -125,7 +125,7 @@ export function GlossaryClient() {
                     return (
                       <tr
                         key={key}
-                        className="transition-colors even:bg-foreground/[0.015] hover:bg-foreground/[0.04]"
+                        className="transition-colors even:bg-foreground/1.5 hover:bg-foreground/4"
                       >
                         <td className="whitespace-nowrap px-3 py-2 text-[13px] font-semibold text-foreground/85">
                           {label}

@@ -146,7 +146,7 @@ export function StatPicker({
         </div>
       ) : (
         /* Category accordion */
-        <div className="rounded-lg border border-foreground/10 divide-y divide-foreground/[0.06]">
+        <div className="rounded-lg border border-foreground/10 divide-y divide-foreground/6">
           {categories.map((category) => {
             const isExpanded = expandedCategory === category.title;
             const selectedInCategory = category.stats.filter((s) =>
@@ -161,7 +161,7 @@ export function StatPicker({
                     setExpandedCategory(isExpanded ? null : category.title)
                   }
                   aria-expanded={isExpanded}
-                  className="flex w-full items-center justify-between px-3 py-2.5 text-left hover:bg-foreground/[0.02] transition-colors"
+                  className="flex w-full items-center justify-between px-3 py-2.5 text-left hover:bg-foreground/2 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium">{category.title}</span>
@@ -190,7 +190,7 @@ export function StatPicker({
                 </button>
 
                 {isExpanded && (
-                  <div className="border-t border-foreground/[0.04] bg-foreground/[0.01] px-3 py-2">
+                  <div className="border-t border-foreground/4 bg-foreground/1 px-3 py-2">
                     <div className="mb-2 flex gap-2">
                       <button
                         type="button"

@@ -60,7 +60,7 @@ export function ComparisonTable({
       <table className="w-full text-sm">
         {/* Header: entity images + names */}
         <thead>
-          <tr className="border-b border-foreground/[0.06]">
+          <tr className="border-b border-foreground/6">
             <th scope="col" className="px-4 py-3 text-left font-medium text-foreground/40 w-[180px] min-w-[140px]">
               Stat
             </th>
@@ -114,8 +114,8 @@ export function ComparisonTable({
               <tr
                 key={key}
                 className={cn(
-                  "border-b border-foreground/[0.04]",
-                  i % 2 === 0 ? "bg-background" : "bg-foreground/[0.015]"
+                  "border-b border-foreground/4",
+                  i % 2 === 0 ? "bg-background" : "bg-foreground/1.5"
                 )}
               >
                 <td className="px-4 py-2 text-foreground/70">

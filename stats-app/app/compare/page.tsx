@@ -23,8 +23,8 @@ export default async function ComparePage({
   const mode = modeRaw === "team" ? "team" : "player";
   const ids = parseIds(sp.ids);
 
-  let entities: CompareEntity[] = [];
-  let entityStats: Record<string, Record<string, unknown>> = {};
+  const entities: CompareEntity[] = [];
+  const entityStats: Record<string, Record<string, unknown>> = {};
 
   if (ids.length > 0) {
     const validated = filterSchema.parse(filters);

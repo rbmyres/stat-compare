@@ -36,7 +36,7 @@ export function ExportToolbar({
       link.download = `stat-comparison-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
-    } catch (err) {
+    } catch {
       setExportError("Image export failed. Try using Print instead.");
     }
   }, [tableRef]);

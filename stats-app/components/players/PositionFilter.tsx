@@ -39,16 +39,16 @@ export function PositionFilter({ selected, onChange }: PositionFilterProps) {
       <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
         Pos
       </span>
-      <div className="inline-flex h-7 overflow-hidden rounded border border-foreground/[0.08]">
+      <div className="inline-flex h-7 overflow-hidden rounded border border-foreground/8">
         <button
           type="button"
           onClick={toggleAll}
           className={cn(
             "cursor-pointer px-2 text-[11px] font-semibold tracking-wide transition-all duration-100",
-            "border-r border-foreground/[0.08]",
+            "border-r border-foreground/8",
             allSelected
               ? "bg-nfl-navy text-white"
-              : "bg-white text-foreground/40 hover:bg-foreground/[0.03] hover:text-foreground/60"
+              : "bg-white text-foreground/40 hover:bg-foreground/3 hover:text-foreground/60"
           )}
         >
           All
@@ -60,10 +60,10 @@ export function PositionFilter({ selected, onChange }: PositionFilterProps) {
             onClick={() => toggle(pos)}
             className={cn(
               "cursor-pointer px-2 text-[11px] font-semibold tracking-wide transition-all duration-100",
-              "border-r border-foreground/[0.08] last:border-r-0",
+              "border-r border-foreground/8 last:border-r-0",
               !allSelected && selected.has(pos)
                 ? "bg-nfl-navy text-white"
-                : "bg-white text-foreground/40 hover:bg-foreground/[0.03] hover:text-foreground/60"
+                : "bg-white text-foreground/40 hover:bg-foreground/3 hover:text-foreground/60"
             )}
           >
             {pos}

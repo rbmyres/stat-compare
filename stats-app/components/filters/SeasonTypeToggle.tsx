@@ -20,7 +20,7 @@ export function SeasonTypeToggle({ value, onChange }: SeasonTypeToggleProps) {
       <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
         Type
       </span>
-      <div className="inline-flex h-7 overflow-hidden rounded border border-foreground/[0.08]">
+      <div className="inline-flex h-7 overflow-hidden rounded border border-foreground/8">
         {SEASON_TYPES.map((type) => (
           <button
             key={type}
@@ -28,10 +28,10 @@ export function SeasonTypeToggle({ value, onChange }: SeasonTypeToggleProps) {
             onClick={() => onChange(type)}
             className={cn(
               "cursor-pointer px-2.5 text-[11px] font-semibold tracking-wide transition-all duration-100",
-              "border-r border-foreground/[0.08] last:border-r-0",
+              "border-r border-foreground/8 last:border-r-0",
               value === type
                 ? "bg-nfl-navy text-white"
-                : "bg-white text-foreground/40 hover:bg-foreground/[0.03] hover:text-foreground/60"
+                : "bg-white text-foreground/40 hover:bg-foreground/3 hover:text-foreground/60"
             )}
           >
             {LABELS[type]}
