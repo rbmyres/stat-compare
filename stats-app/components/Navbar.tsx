@@ -49,6 +49,7 @@ function NavLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       className={cn(
         "relative px-3 py-1.5 text-[13px] font-medium tracking-wide uppercase transition-colors duration-150",
         isActive
@@ -82,6 +83,7 @@ function NavDropdown({
     >
       <Link
         href={item.href}
+        prefetch={false}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "Enter") {
             e.preventDefault();
@@ -134,6 +136,7 @@ function NavDropdown({
             <Link
               key={child.href}
               href={child.href}
+              prefetch={false}
               data-dropdown-item
               role="menuitem"
               onBlur={(e) => {
@@ -184,6 +187,7 @@ function MobileNavLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       onClick={onClick}
       className={cn(
         "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium tracking-wide transition-colors duration-150",
@@ -247,6 +251,7 @@ export function Navbar() {
           {/* Brand */}
           <Link
             href="/"
+            prefetch={false}
             className="shrink-0 text-[15px] font-bold tracking-[-0.02em] text-white transition-opacity hover:opacity-80"
           >
             StatCompare
